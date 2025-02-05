@@ -3,7 +3,7 @@ import React from 'react';
 const Footer = () => {
   return (
     <footer className="bg-black text-white py-12 w-full">
-      <div className="flex flex-col lg:flex-row justify-between w-full px-8 max-w-7xl mx-auto">
+      <div className="flex flex-col lg:flex-row justify-between w-full px-8  mx-auto">
         {/* Left Column */}
         <div className="space-y-3 mb-8 lg:mb-0 group">
           <h3 className="font-semibold text-lg mb-4 border-b border-gray-700 pb-2">Quick Links</h3>

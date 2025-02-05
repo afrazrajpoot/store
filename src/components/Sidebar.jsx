@@ -40,8 +40,8 @@ const Sidebar = () => {
       icon: <Home className="h-5 w-5 text-indigo-600" />
     },
     {
-      category: 'Profile',
-      route: '/profile',
+      category: 'About Us',
+      route: '/about-us',
       icon: <User className="h-5 w-5 text-indigo-600" />
     }
   ];

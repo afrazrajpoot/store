@@ -7,8 +7,8 @@ const NewsLetter = () => {
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
         viewport={{ once: true }}
-        className="bg-gradient-to-r from-blue-600 to-purple-600 
-        text-white py-20 overflow-hidden"
+        className="bg-white
+        text-black py-20 overflow-hidden"
       >
         <div className="container mx-auto px-4 text-center relative">
           <motion.div
@@ -31,8 +31,8 @@ const NewsLetter = () => {
                 type="email" 
                 placeholder="Enter your email" 
                 className="flex-grow px-6 py-4 rounded-l-full 
-                  text-black outline-none focus:ring-2 
-                  focus:ring-blue-500"
+                  text-black outline-none
+                  "
               />
               <motion.button 
                 whileHover={{ scale: 1.05 }}

@@ -29,13 +29,10 @@ const Products = ({ data,userRole,deleteProduct }) => {
           <Link href={`/products/${product._id}`} key={product._id}>
             <motion.div
               key={product._id}
-              whileHover={{
-                scale: 1.05,
-                boxShadow: '0 15px 30px rgba(0,0,0,0.1)',
-              }}
+            
               className="bg-gray-50 overflow-hidden
                      transform transition-all duration-300
-                     hover:rotate-1 hover:border-blue-200
+                      hover:border-black
                      border-2 border-transparent"
             >
               <div
@@ -57,7 +54,7 @@ const Products = ({ data,userRole,deleteProduct }) => {
                   src={isHovering ? hoverImagePath[currentImageIndex] : mainImagePath}
                   alt={product.name}
                   className="w-full object-cover transition-transform duration-300
-                         transform hover:scale-110"
+                        "
                 />
                 {product.label && (
                   <div

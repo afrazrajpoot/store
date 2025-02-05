@@ -3,86 +3,184 @@ import Footer from '@/components/Footer'
 import HeroSection from '@/components/HeroSection'
 import NewsLetter from '@/components/NewsLetter'
 import Products from '@/components/Products'
-import { category, shopData } from '@/data'
-import {  useGetImagesQuery, useGetProductsQuery } from '@/store/storeApi'
+import { shopData } from '@/data'
+import { useGetImagesQuery, useGetProductsQuery } from '@/store/storeApi'
 import { motion } from 'framer-motion'
-// import 'antd/dist/antd.css';
 import { useEffect, useState } from 'react'
 
 const LandingPage = () => {
   const [activeTab, setActiveTab] = useState('trending')
-  const {isLoading,data,isError,error} = useGetProductsQuery()
-  const {data:images,isLoading:imageLoading} = useGetImagesQuery()
+  const [filteredProducts, setFilteredProducts] = useState([])
+  const { isLoading, data: products, isError, error } = useGetProductsQuery()
+  const { data: images, isLoading: imageLoading } = useGetImagesQuery()
 
-  const containerVariants = {
+  // Animation variants
+  const fadeInUp = {
+    hidden: { opacity: 0, y: 60 },
+    visible: { 
+      opacity: 1, 
+      y: 0,
+      transition: {
+        duration: 0.6,
+        ease: "easeOut"
+      }
+    }
+  }
+
+  const staggerChildren = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.1
+        staggerChildren: 0.2
       }
     }
   }
 
-  const itemVariants = {
-    hidden: { y: 50, opacity: 0 },
+  const scaleIn = {
+    hidden: { opacity: 0, scale: 0.8 },
     visible: {
-      y: 0,
       opacity: 1,
+      scale: 1,
       transition: {
-        type: "spring",
-        stiffness: 100
+        duration: 0.6
       }
     }
   }
- 
+
+  // Get unique categories from products
+  const categories = products ? [...new Set(products.map(product => product.category))] : []
+
+  useEffect(() => {
+    if (products) {
+      const filtered = activeTab === 'trending'
+        ? products
+        : products.filter(product => product.category.toLowerCase() === activeTab.toLowerCase())
+      setFilteredProducts(filtered)
+    }
+  }, [activeTab, products])
+
+  if (isLoading) {
+    return (
+      <div className="bg-white min-h-screen">
+        <div className="flex justify-center items-center min-h-screen">Loading...</div>
+      </div>
+    )
+  }
+
+  if (isError) {
+    return (
+      <div className="bg-white min-h-screen">
+        <div className="flex justify-center items-center min-h-screen">Error: {error.message}</div>
+      </div>
+    )
+  }
+
   return (
-    <div className="bg-gradient-to-br from-gray-50 to-blue-50 min-h-screen">
+    <div className="bg-white min-h-screen">
+      <HeroSection images={images?.heroImages || []} />
 
-      {/* Hero Section */}
-     <HeroSection images={images?.heroImages || []}  />
+      {/* Brand Story Section */}
+      <motion.section 
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, margin: "-100px" }}
+        variants={fadeInUp}
+        className="container mx-auto px-4 py-24 bg-gray-50"
+      >
+        <div className="max-w-4xl mx-auto text-center">
+          <motion.h2 
+            variants={fadeInUp}
+            className="text-4xl font-extrabold mb-8 text-gray-800"
+          >
+            Our Story
+          </motion.h2>
+          <motion.p 
+            variants={fadeInUp}
+            className="text-lg text-gray-600 mb-12 leading-relaxed"
+          >
+            Roshni
+I started Roshni with a simple yet powerful idea: to bring high-quality fabric to people at an affordable price—the kind of quality you see in big brands but at a price everyone can afford.
 
-    
+From the very beginning, our goal has been to break the myth that premium quality comes with a premium price. We focus on top-tier fabrics, modern designs, and attention to detail, ensuring that every piece reflects comfort, style, and durability.
 
-      {/* Featured Products Tabs */}
-      <section className="container  mx-auto px-4 py-16  bg-white w-full max-w-[100vw]">
-        <h2 className="text-4xl font-extrabold text-center mb-12 text-gray-800">
+Today, Roshni stands for more than just clothing—it’s a movement to redefine everyday fashion without compromise.
+
+Join us in bringing quality and affordability together. Welcome to Roshni—where fashion meets fairness.
+          </motion.p>
+          <motion.div 
+            variants={staggerChildren}
+            className="grid md:grid-cols-3 gap-8"
+          >
+            {['Quality First', 'Sustainable Choice', 'Customer Focus'].map((title, index) => (
+              <motion.div
+                key={index}
+                variants={scaleIn}
+                className="p-6 bg-white rounded-lg shadow-sm"
+              >
+                <h3 className="font-bold text-xl mb-4 text-gray-800">{title}</h3>
+                <p className="text-gray-600">
+                  {title === 'Quality First' && 'Every product in our collection is carefully selected and quality-tested.'}
+                  {title === "Sustainable Choice' && 'We're committed to reducing our environmental impact through eco-friendly practices."}
+                  {title === 'Customer Focus' && 'Your satisfaction is our priority, with dedicated support and hassle-free returns.'}
+                </p>
+              </motion.div>
+            ))}
+          </motion.div>
+        </div>
+      </motion.section>
+
+      {/* Featured Products Section */}
+      <motion.section 
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, margin: "-100px" }}
+        variants={fadeInUp}
+        className="container mx-auto px-4 py-16 bg-white w-full max-w-[100vw]"
+      >
+        <motion.h2 
+          variants={fadeInUp}
+          className="text-4xl font-extrabold text-center mb-12 text-gray-800"
+        >
           Explore Our Collections
-        </h2>
-        <div className="flex justify-center mb-8">
-          {['trending', 'new', 'bestsellers'].map((tab) => (
-            <button
-              key={tab}
-              onClick={() => setActiveTab(tab)}
-              className={`px-6 py-3 mx-2 rounded-full font-semibold transition-all 
-                ${activeTab === tab 
-                  ? 'bg-blue-600 text-white' 
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
-            >
-              {tab.charAt(0).toUpperCase() + tab.slice(1)}
-            </button>
-          ))}
-        </div>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-1">
-        <Products data={data} />
-        </div>
-      </section>
+        </motion.h2>
+        
+        <motion.div 
+          variants={staggerChildren}
+          className="grid grid-cols-2 md:grid-cols-4 gap-6"
+        >
+          <Products data={filteredProducts} />
+        </motion.div>
+      </motion.section>
 
-      {/* Why Choose Us */}
-      <section className="container mx-auto px-4 py-16">
-        <h2 className="text-4xl font-extrabold text-center mb-12 text-gray-800">
+      {/* Why Choose Us Section */}
+      <motion.section 
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, margin: "-100px" }}
+        variants={fadeInUp}
+        className="container mx-auto px-4 py-16 bg-gray-50"
+      >
+        <motion.h2 
+          variants={fadeInUp}
+          className="text-4xl font-extrabold text-center mb-12 text-gray-800"
+        >
           Why Shop With Us
-        </h2>
-        <div className="grid md:grid-cols-3 gap-8">
+        </motion.h2>
+        <motion.div 
+          variants={staggerChildren}
+          className="grid md:grid-cols-3 gap-8"
+        >
           {shopData.map((feature, index) => (
-            <motion.div 
+            <motion.div
               key={index}
-              whileHover={{ 
+              variants={scaleIn}
+              whileHover={{
                 scale: 1.05,
                 boxShadow: "0 10px 20px rgba(0,0,0,0.1)"
               }}
               className={`${feature.bg} flex items-center space-x-6 
-                p-6 rounded-2xl transform transition-all 
+                p-6 rounded-2xl transform transition-all
                 duration-300 hover:rotate-2 cursor-pointer`}
             >
               {feature.icon}
@@ -94,14 +192,56 @@ const LandingPage = () => {
               </div>
             </motion.div>
           ))}
+        </motion.div>
+      </motion.section>
+
+      {/* Values Section */}
+      <motion.section 
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, margin: "-100px" }}
+        variants={fadeInUp}
+        className="container mx-auto px-4 py-24 bg-white"
+      >
+        <div className="max-w-6xl mx-auto">
+          <motion.h2 
+            variants={fadeInUp}
+            className="text-4xl font-extrabold text-center mb-16 text-gray-800"
+          >
+            Our Values
+          </motion.h2>
+          <motion.div 
+            variants={staggerChildren}
+            className="grid md:grid-cols-2 gap-16"
+          >
+            {[
+              {
+                title: 'Craftsmanship',
+                description: 'We believe in the power of quality craftsmanship. Each product in our collection represents our commitment to excellence and attention to detail.'
+              },
+              {
+                title: 'Sustainability',
+                description: "Our commitment to sustainability goes beyond products. We're actively working to reduce our environmental footprint in every aspect of our business."
+              }
+            ].map((value, index) => (
+              <motion.div
+                key={index}
+                variants={scaleIn}
+              >
+                <img 
+                  src="/api/placeholder/600/400"
+                  alt={value.title} 
+                  className="rounded-lg shadow-lg mb-8"
+                />
+                <h3 className="text-2xl font-bold mb-4 text-gray-800">{value.title}</h3>
+                <p className="text-gray-600 leading-relaxed">{value.description}</p>
+              </motion.div>
+            ))}
+          </motion.div>
         </div>
-      </section>
+      </motion.section>
 
-      {/* Newsletter Signup */}
-  {/* <NewsLetter /> */}
-
-      {/* Footer */}
- 
+      <NewsLetter />
     </div>
   )
 }
