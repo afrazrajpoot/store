@@ -5,7 +5,7 @@ import { NextResponse } from "next/server";
 export async function POST(request) {
     try {
         const data = await request.json();
-        const { email, customerName, message } = data;
+        const { email, customerName, message,trackingId } = data;
 
         if (!email || !customerName  || !message) {
             return NextResponse.json(
@@ -15,7 +15,7 @@ export async function POST(request) {
         }
 
         // Send shipment email
-        await sendShipmentMessage(email, customerName,1234, message);
+        await sendShipmentMessage(email, customerName,trackingId, message);
 
         return NextResponse.json(
             { message: `Shipment email sent to ${email}` },

@@ -8,8 +8,11 @@ export const ShipmentEmail = ({ customerName, trackingNumber, message }) => {
         <p>${message}</p>
         <p>You can track your order using the tracking number above.</p>
         <p>Thank you for shopping with us! 🚀</p>
-        <p>Best Regards, <br><strong>Your Store Team</strong></p>
+        <p>Best Regards, <br><strong>Roshni  Store</strong></p>
       </div>
     `;
   };
   
+
+
+  // djafaq143@gmail.com

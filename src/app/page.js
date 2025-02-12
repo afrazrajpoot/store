@@ -203,42 +203,7 @@ Join us in bringing quality and affordability together. Welcome to Roshni—wher
         variants={fadeInUp}
         className="container mx-auto px-4 py-24 bg-white"
       >
-        <div className="max-w-6xl mx-auto">
-          <motion.h2 
-            variants={fadeInUp}
-            className="text-4xl font-extrabold text-center mb-16 text-gray-800"
-          >
-            Our Values
-          </motion.h2>
-          <motion.div 
-            variants={staggerChildren}
-            className="grid md:grid-cols-2 gap-16"
-          >
-            {[
-              {
-                title: 'Craftsmanship',
-                description: 'We believe in the power of quality craftsmanship. Each product in our collection represents our commitment to excellence and attention to detail.'
-              },
-              {
-                title: 'Sustainability',
-                description: "Our commitment to sustainability goes beyond products. We're actively working to reduce our environmental footprint in every aspect of our business."
-              }
-            ].map((value, index) => (
-              <motion.div
-                key={index}
-                variants={scaleIn}
-              >
-                <img 
-                  src="/api/placeholder/600/400"
-                  alt={value.title} 
-                  className="rounded-lg shadow-lg mb-8"
-                />
-                <h3 className="text-2xl font-bold mb-4 text-gray-800">{value.title}</h3>
-                <p className="text-gray-600 leading-relaxed">{value.description}</p>
-              </motion.div>
-            ))}
-          </motion.div>
-        </div>
+     
       </motion.section>
 
       <NewsLetter />

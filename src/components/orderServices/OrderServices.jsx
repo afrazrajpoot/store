@@ -171,63 +171,83 @@ export const PaginationControls = ({ pagination, currentPage, handlePageChange }
     </div>
 );
 
+
+
 export const ShipmentFormModal = ({ isOpen, onClose, order }) => {
-    const [sendShipment,{isLoading,isSuccess,data,isError}] = useSentShipmentMessageMutation()
+    const [sendShipment, { isLoading, isSuccess, data, isError }] = useSentShipmentMessageMutation();
     const [formData, setFormData] = useState({
         name: order?.customerDetails?.name || '',
         email: order?.customerDetails?.email || '',
+        trackingId: '',
         message: ''
     });
-    // customerName
-    // Update formData when the order changes
+
     useEffect(() => {
         if (order) {
-            setFormData({
+            setFormData(prevData => ({
                 name: order.customerDetails.name,
                 email: order.customerDetails.email,
-                message: ''
-            });
+                trackingId: prevData.trackingId,
+                message: getDefaultMessage(order.customerDetails.name, prevData.trackingId)
+            }));
         }
     }, [order]);
 
+    // Function to generate default message
+    const getDefaultMessage = (customerName, trackingId) => {
+        return `Dear ${customerName},
+
+Your order has been shipped! ${trackingId ? `You can track your package using tracking ID: ${trackingId}` : ''}
+
+Thank you for shopping with us. If you have any questions about your shipment, please don't hesitate to contact our customer service team.
+
+Best regards,
+The Outfitters Team`;
+    };
+
+    // Update message when tracking ID changes
+    useEffect(() => {
+        setFormData(prevData => ({
+            ...prevData,
+            message: getDefaultMessage(prevData.name, prevData.trackingId)
+        }));
+    }, [formData.trackingId]);
+
     const handleSubmit = (e) => {
         e.preventDefault();
-       console.log(formData,'form data')
-       sendShipment({
-        email:formData.email,
-        customerName:formData.name,
-        message:formData.message,
-     
-       })
-       
+        sendShipment({
+            email: formData.email,
+            customerName: formData.name,
+            message: formData.message,
+            trackingId: formData.trackingId
+        });
     };
-useEffect(()=>{
-    if(isSuccess){
-        onClose();
-        toast.success("Action order successfully",{
-            position: 'top-right',
-            autoClose: 5000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: false,
-            draggable: true,
-            progress: undefined,
-        })
-    }
-    if(isError){
-        // onClose();
-        toast.error("Action order failed",{
-            position: 'top-right',
-            autoClose: 5000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: false,
-            draggable: true,
-            progress: undefined,
-        })
-    }
-    },[isSuccess])
 
+    useEffect(() => {
+        if (isSuccess) {
+            onClose();
+            toast.success("Order shipped successfully", {
+                position: 'top-right',
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: false,
+                draggable: true,
+                progress: undefined,
+            });
+        }
+        if (isError) {
+            toast.error("Failed to process shipment", {
+                position: 'top-right',
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: false,
+                draggable: true,
+                progress: undefined,
+            });
+        }
+    }, [isSuccess, isError]);
 
     return (
         <AnimatePresence>
@@ -286,6 +306,20 @@ useEffect(()=>{
 
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 mb-1">
+                                        Tracking ID
+                                    </label>
+                                    <input
+                                        type="text"
+                                        value={formData.trackingId}
+                                        onChange={(e) => setFormData({ ...formData, trackingId: e.target.value })}
+                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
+                                        placeholder="Enter tracking ID"
+                                        required
+                                    />
+                                </div>
+
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">
                                         Message
                                     </label>
                                     <textarea
@@ -293,7 +327,7 @@ useEffect(()=>{
                                         onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                                         className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
                                         placeholder="Enter shipping message"
-                                        rows="3"
+                                        rows="6"
                                         required
                                     />
                                 </div>
@@ -302,11 +336,10 @@ useEffect(()=>{
                                     whileHover={{ scale: 1.02 }}
                                     whileTap={{ scale: 0.98 }}
                                     type="submit"
-                                    className="w-full flex items-center justify-center gap-2 bg-black text-white py-3 rounded-lg  transition-colors"
+                                    className="w-full flex items-center justify-center gap-2 bg-black text-white py-3 rounded-lg transition-colors"
                                 >
                                     <Send size={18} />
-                                    {isLoading?'loading...':'  Send Shipment'}
-                                  
+                                    {isLoading ? 'Sending...' : 'Send Shipment'}
                                 </motion.button>
                             </form>
                         </div>

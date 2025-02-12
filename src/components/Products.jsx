@@ -1,21 +1,15 @@
 'use client'
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 
-
-const Products = ({ data,userRole,deleteProduct }) => {
- 
-
-
- 
+const Products = ({ data, userRole, deleteProduct }) => {
+  // Manage hover state for each product
+  const [hoverIndex, setHoverIndex] = useState(null);
 
   return (
     <>
-      {data?.map((product) => {
-        const [currentImageIndex, setCurrentImageIndex] = useState(0);
-        const [isHovering, setIsHovering] = useState(false);
-
+      {data?.map((product, index) => {
         // Define paths with default fallback
         const mainImagePath = product.image
           ? `${process.env.NEXT_PUBLIC_BASE_URL}${product.image}`
@@ -29,7 +23,6 @@ const Products = ({ data,userRole,deleteProduct }) => {
           <Link href={`/products/${product._id}`} key={product._id}>
             <motion.div
               key={product._id}
-            
               className="bg-gray-50 overflow-hidden
                      transform transition-all duration-300
                       hover:border-black
@@ -37,24 +30,17 @@ const Products = ({ data,userRole,deleteProduct }) => {
             >
               <div
                 className="relative overflow-hidden"
-                onMouseEnter={() => {
-                  setIsHovering(true);
-                  setCurrentImageIndex(1); // Show the first hover image
-                }}
-                onMouseLeave={() => {
-                  setIsHovering(false);
-                  setCurrentImageIndex(0); // Reset to main image
-                }}
+                onMouseEnter={() => setHoverIndex(index)}
+                onMouseLeave={() => setHoverIndex(null)}
               >
                 <motion.img
-                  key={currentImageIndex}
+                  key={hoverIndex === index ? 1 : 0}
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ duration: 0.3 }}
-                  src={isHovering ? hoverImagePath[currentImageIndex] : mainImagePath}
+                  src={hoverIndex === index ? hoverImagePath[0] : mainImagePath}
                   alt={product.name}
-                  className="w-full object-cover transition-transform duration-300
-                        "
+                  className="w-full object-cover transition-transform duration-300"
                 />
                 {product.label && (
                   <div
@@ -76,8 +62,6 @@ const Products = ({ data,userRole,deleteProduct }) => {
                   </span>
                 </div>
               </div>
-              {/* Render delete button for admin */}
-            
             </motion.div>
           </Link>
         );

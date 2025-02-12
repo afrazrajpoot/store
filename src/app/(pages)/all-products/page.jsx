@@ -2,11 +2,11 @@
 import Products from '@/components/Products'
 import { useGetProductsQuery } from '@/store/storeApi'
 import { useSearchParams } from 'next/navigation'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, Suspense } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Search, Package2 } from 'lucide-react'
 
-const CategoryPage = () => {
+const CategoryPageContent = () => {
   const searchParams = useSearchParams()
   const category = searchParams.get('category')
   const [filteredProducts, setFilteredProducts] = useState([])
@@ -145,6 +145,14 @@ const CategoryPage = () => {
         </motion.div>
       </div>
     </div>
+  )
+}
+
+const CategoryPage = () => {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <CategoryPageContent />
+    </Suspense>
   )
 }
 

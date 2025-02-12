@@ -1,5 +1,5 @@
 'use client';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, Suspense } from 'react';
 import { format } from 'date-fns';
 import { useCompleteOrderMutation, useGetOrdersQuery } from '@/store/storeApi';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -13,9 +13,7 @@ const LoadingSpinner = () => (
     </div>
 );
 
-
-
-const Page = () => {
+const OrdersTable = () => {
     const router = useRouter();
     const searchParams = useSearchParams();
     const currentPage = Number(searchParams.get('page')) || 1;
@@ -183,5 +181,11 @@ const Page = () => {
         </div>
     );
 };
+
+const Page = () => (
+    <Suspense fallback={<LoadingSpinner />}>
+        <OrdersTable />
+    </Suspense>
+);
 
 export default Page;

@@ -96,7 +96,7 @@ export const sendOrderEmails = async (orderDetails) => {
     const uniqueEmails = new Set([adminEmail, customerEmail]);
     const emailPromises = Array.from(uniqueEmails).map((to) =>
       transporter.sendMail({
-        from: `Your Store <${process.env.SENDER_EMAIL}>`,
+        from: `Roshni Store <${process.env.SENDER_EMAIL}>`,
         to,
         subject: to === adminEmail ? `New Order` : `Order Confirmation`,
         html: to === adminEmail ? adminHtmlContent : customerHtmlContent,
@@ -149,7 +149,7 @@ export const sendShipmentMessage = async (
     });
 
     const emailResult = await transporter.sendMail({
-      from: `Your Store <${process.env.SENDER_EMAIL}>`,
+      from: `Roshni store <${process.env.SENDER_EMAIL}>`,
       to: customerEmail,
       subject: "📦 Your Order Has Been Shipped!",
       html: shipmentHtmlContent,
