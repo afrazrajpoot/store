@@ -1,6 +1,6 @@
-'use client'
-import React, { useState, useEffect, useRef } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+"use client";
+import React, { useState, useEffect, useRef } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   Menu,
   X,
@@ -13,11 +13,11 @@ import {
   LayoutDashboard,
   Home,
   User,
-  Settings
-} from 'lucide-react';
-import { usePathname, useRouter } from 'next/navigation';
-import { useGetProductsQuery } from '@/store/storeApi';
-import Link from 'next/link';
+  Settings,
+} from "lucide-react";
+import { usePathname, useRouter } from "next/navigation";
+import { useGetProductsQuery } from "@/store/storeApi";
+import Link from "next/link";
 
 const Sidebar = () => {
   const [isExpanded, setIsExpanded] = useState(false);
@@ -29,60 +29,59 @@ const Sidebar = () => {
   const { isLoading, data, isError, error } = useGetProductsQuery();
 
   useEffect(() => {
-    const userRole = JSON.parse(localStorage.getItem('user'));
-    setIsAdmin(userRole?.user?.role === 'admin');
+    const userRole = JSON.parse(localStorage.getItem("user"));
+    setIsAdmin(userRole?.user?.role === "admin");
   }, []);
 
   const mainRoutes = [
     {
-      category: 'Home',
-      route: '/',
-      icon: <Home className="h-5 w-5 text-indigo-600" />
+      category: "Home",
+      route: "/",
+      icon: <Home className="h-5 w-5 text-indigo-600" />,
     },
     {
-      category: 'About Us',
-      route: '/about-us',
-      icon: <User className="h-5 w-5 text-indigo-600" />
-    }
+      category: "Our Story",
+      route: "/our-story",
+      icon: <User className="h-5 w-5 text-indigo-600" />,
+    },
   ];
 
   const adminRoutes = [
     {
-      category: 'Orders',
-      route: '/orders',
-      icon: <ShoppingBag className="h-5 w-5 text-indigo-600" />
+      category: "Orders",
+      route: "/orders",
+      icon: <ShoppingBag className="h-5 w-5 text-indigo-600" />,
     },
     {
-      category: 'Analytics',
-      route: '/analyze',
-      icon: <BarChart2 className="h-5 w-5 text-indigo-600" />
+      category: "Analytics",
+      route: "/analyze",
+      icon: <BarChart2 className="h-5 w-5 text-indigo-600" />,
     },
     {
-      category: 'Upload Products',
-      route: '/admin',
-      icon: <Upload className="h-5 w-5 text-indigo-600" />
+      category: "Upload Products",
+      route: "/admin",
+      icon: <Upload className="h-5 w-5 text-indigo-600" />,
     },
     {
-      category: 'Products with 0 quantity',
-      route: '/productwith0',
-      icon: <ShoppingBag className="h-5 w-5 text-indigo-600" />
+      category: "Products with 0 quantity",
+      route: "/productwith0",
+      icon: <ShoppingBag className="h-5 w-5 text-indigo-600" />,
     },
     {
-      category: 'Upload images',
-      route: '/uploadImages',
-      icon: <Upload className="h-5 w-5 text-indigo-600" />
+      category: "Upload images",
+      route: "/uploadImages",
+      icon: <Upload className="h-5 w-5 text-indigo-600" />,
     },
   ];
 
-  const categoryRoutes = data?.map(item => ({
-    category: item.category,
-    route: `/all-products?category=${encodeURIComponent(item.category)}`,
-    icon: <Layers className="h-5 w-5 text-indigo-600" />
-  })) || [];
+  const categoryRoutes =
+    data?.map((item) => ({
+      category: item.category,
+      route: `/all-products?category=${encodeURIComponent(item.category)}`,
+      icon: <Layers className="h-5 w-5 text-indigo-600" />,
+    })) || [];
 
-  const allRoutes = isAdmin 
-    ? [...mainRoutes, ...categoryRoutes, ...adminRoutes] 
-    : [...mainRoutes, ...categoryRoutes];
+  const allRoutes = isAdmin ? [...mainRoutes, ...adminRoutes] : [...mainRoutes];
 
   const handleNavigation = (route) => {
     router.push(route);
@@ -101,32 +100,32 @@ const Sidebar = () => {
       }
     };
 
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   const sidebarVariants = {
     expanded: {
       width: "300px",
-      transition: { duration: 0.2 }
+      transition: { duration: 0.2 },
     },
     collapsed: {
       width: "0px",
-      transition: { duration: 0.2 }
-    }
+      transition: { duration: 0.2 },
+    },
   };
 
   const menuItemVariants = {
     expanded: {
       opacity: 1,
       x: 0,
-      transition: { duration: 0.2 }
+      transition: { duration: 0.2 },
     },
     collapsed: {
       opacity: 0,
       x: -10,
-      transition: { duration: 0.2 }
-    }
+      transition: { duration: 0.2 },
+    },
   };
 
   return (
@@ -168,7 +167,6 @@ const Sidebar = () => {
           <div className="bg-black">
             <div className="flex items-center justify-between">
               <Link href="/" className="flex items-center space-x-3">
-             
                 <AnimatePresence>
                   {isExpanded && (
                     <motion.span
@@ -178,12 +176,11 @@ const Sidebar = () => {
                       exit="collapsed"
                       className=""
                     >
-                      <img src="/logo/re.png" alt="logo" className='' />
+                      <img src="/logo/re.png" alt="logo" className="" />
                     </motion.span>
                   )}
                 </AnimatePresence>
               </Link>
-           
             </div>
           </div>
 
@@ -195,9 +192,11 @@ const Sidebar = () => {
                   key={index}
                   className={`
                     group relative rounded-lg
-                    ${pathName === item.route 
-                      ? 'bg-indigo-50 text-indigo-600' 
-                      : 'hover:bg-gray-50 text-gray-700'}
+                    ${
+                      pathName === item.route
+                        ? "bg-indigo-50 text-indigo-600"
+                        : "hover:bg-gray-50 text-gray-700"
+                    }
                   `}
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
@@ -233,7 +232,7 @@ const Sidebar = () => {
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               onClick={() => {
-                router.push('/login');
+                router.push("/login");
                 setIsExpanded(false);
               }}
             >

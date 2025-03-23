@@ -1,7 +1,7 @@
-'use client'
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import Link from 'next/link';
+"use client";
+import React, { useState } from "react";
+import { motion } from "framer-motion";
+import Link from "next/link";
 
 const Products = ({ data, userRole, deleteProduct }) => {
   // Manage hover state for each product
@@ -13,14 +13,16 @@ const Products = ({ data, userRole, deleteProduct }) => {
         // Define paths with default fallback
         const mainImagePath = product.image
           ? `${process.env.NEXT_PUBLIC_BASE_URL}${product.image}`
-          : '/uploads/1737204160962-Screenshotfrom2024-09-1315-46-37.png';
+          : "/uploads/1737204160962-Screenshotfrom2024-09-1315-46-37.png";
 
         const hoverImagePath = product.hoverImages?.length
-          ? product.hoverImages.map((img) => `${process.env.NEXT_PUBLIC_BASE_URL}${img}`)
+          ? product.hoverImages.map(
+              (img) => `${process.env.NEXT_PUBLIC_BASE_URL}${img}`
+            )
           : [`/uploads/1737204160962-Screenshotfrom2024-09-1315-46-37.png`];
 
         return (
-          <Link href={`/products/${product._id}`} key={product._id}>
+          <Link href={`/product/${product._id}`} key={product._id}>
             <motion.div
               key={product._id}
               className="bg-gray-50 overflow-hidden

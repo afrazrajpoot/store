@@ -14,9 +14,8 @@ import {
   Sliders,
 } from "lucide-react";
 
-const CategoryPageContent = () => {
+const AllProductsPageContent = () => {
   const searchParams = useSearchParams();
-  const category = searchParams.get("category");
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [priceRange, setPriceRange] = useState({ min: 0, max: 0 });
   const [currentRange, setCurrentRange] = useState({ min: 0, max: 0 });
@@ -28,30 +27,18 @@ const CategoryPageContent = () => {
 
   useEffect(() => {
     if (data) {
-      const relevantProducts = category
-        ? data.filter(
-            (product) =>
-              product.category.toLowerCase() === category.toLowerCase()
-          )
-        : data;
-      if (relevantProducts.length > 0) {
-        const prices = relevantProducts.map((product) => product.price);
-        const minPrice = Math.min(...prices);
-        const maxPrice = Math.max(...prices);
-        setPriceRange({ min: minPrice, max: maxPrice });
-        setCurrentRange({ min: minPrice, max: maxPrice });
-      }
+      const prices = data.map((product) => product.price);
+      const minPrice = Math.min(...prices);
+      const maxPrice = Math.max(...prices);
+      setPriceRange({ min: minPrice, max: maxPrice });
+      setCurrentRange({ min: minPrice, max: maxPrice });
+      setFilteredProducts(data); // Initially show all products
     }
-  }, [data, category]);
+  }, [data]);
 
   useEffect(() => {
     if (data) {
-      let filtered = data;
-      if (category) {
-        filtered = filtered.filter(
-          (product) => product.category.toLowerCase() === category.toLowerCase()
-        );
-      }
+      let filtered = [...data];
       filtered = filtered.filter(
         (product) =>
           product.price >= currentRange.min && product.price <= currentRange.max
@@ -81,7 +68,7 @@ const CategoryPageContent = () => {
 
       setFilteredProducts(filtered);
     }
-  }, [data, category, currentRange, searchQuery, sortOption]);
+  }, [data, currentRange, searchQuery, sortOption]);
 
   const formatPrice = (price) => {
     return new Intl.NumberFormat("en-US", {
@@ -111,7 +98,7 @@ const CategoryPageContent = () => {
             transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
             className="text-gray-800 text-lg font-medium"
           >
-            Loading collection...
+            Loading all products...
           </motion.p>
         </div>
       </div>
@@ -151,17 +138,9 @@ const CategoryPageContent = () => {
     );
   }
 
-  const getCategoryTitle = () => {
-    if (!category) return "All Collection";
-    return category
-      .split("-")
-      .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-      .join(" ");
-  };
-
   return (
     <div className="min-h-screen bg-white">
-      {/* Category Hero */}
+      {/* Hero Section */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -169,14 +148,11 @@ const CategoryPageContent = () => {
       >
         <div className="max-w-7xl mx-auto px-4 py-12 md:py-20">
           <h1 className="text-4xl md:text-5xl font-bold text-gray-900">
-            {getCategoryTitle()}
+            All Products
           </h1>
           <p className="mt-4 text-gray-600 max-w-2xl">
-            Discover our curated selection of{" "}
-            {category
-              ? category.toLowerCase().replace("-", " ")
-              : "fashion items"}{" "}
-            designed for style and comfort.
+            Explore our entire collection of premium products designed for every
+            style and occasion.
           </p>
         </div>
       </motion.div>
@@ -393,7 +369,7 @@ const CategoryPageContent = () => {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="w-full pl-12 pr-4 py-3 bg-white border border-gray-200 rounded-full focus:outline-none focus:ring-2 focus:ring-gray-300 focus:border-transparent text-gray-700 placeholder-gray-400 shadow-sm"
-                  placeholder="Search products..."
+                  placeholder="Search all products..."
                 />
               </div>
             </motion.div>
@@ -440,7 +416,7 @@ const CategoryPageContent = () => {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-6"
+                  className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-8"
                 >
                   <Products data={filteredProducts} />
                 </motion.div>
@@ -477,7 +453,7 @@ const CategoryPageContent = () => {
   );
 };
 
-const CategoryPage = () => {
+const AllProductsPage = () => {
   return (
     <Suspense
       fallback={
@@ -492,9 +468,9 @@ const CategoryPage = () => {
         </div>
       }
     >
-      <CategoryPageContent />
+      <AllProductsPageContent />
     </Suspense>
   );
 };
 
-export default CategoryPage;
+export default AllProductsPage;
