@@ -3,7 +3,7 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 export const storeApi = createApi({
   reducerPath: "storeApi",
-  baseQuery: fetchBaseQuery({ baseUrl: "http://localhost:3000" }),
+  baseQuery: fetchBaseQuery({ baseUrl: process.env.NEXT_PUBLIC_BASE_URL }),
   tagTypes: ["products", "order"], // Define tag types
   endpoints: (builder) => ({
     addProduct: builder.mutation({
