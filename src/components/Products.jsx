@@ -25,10 +25,10 @@ const Products = ({ data, userRole, deleteProduct }) => {
           <Link href={`/product/${product._id}`} key={product._id}>
             <motion.div
               key={product._id}
-              className="bg-gray-50 overflow-hidden
-                     transform transition-all duration-300
-                      hover:border-black
-                     border-2 border-transparent"
+              className="bg-gray-50 overflow-hidden 
+                     transform transition-all duration-300 
+                     hover:border-black 
+                     border-2 border-transparent relative"
             >
               <div
                 className="relative overflow-hidden"
@@ -44,16 +44,22 @@ const Products = ({ data, userRole, deleteProduct }) => {
                   alt={product.name}
                   className="w-full object-cover transition-transform duration-300"
                 />
-                {product.label && (
-                  <div
-                    className="absolute top-4 right-4
-                              bg-red-500 text-white px-3 py-1 rounded-full
-                              text-sm font-bold"
-                  >
-                    {product.label}
+
+                {/* Product Labels Container */}
+                <div className="absolute top-4 right-4 space-y-2">
+                  {product.label && (
+                    <div className="bg-red-500 text-white px-3 py-1 rounded-full text-sm font-bold">
+                      {product.label}
+                    </div>
+                  )}
+
+                  {/* Free Home Delivery Tag */}
+                  <div className="bg-green-500 text-white px-3 py-1 rounded-full text-sm font-bold">
+                    Free Home Delivery
                   </div>
-                )}
+                </div>
               </div>
+
               <div className="p-6">
                 <h3 className="font-bold text-xl mb-2 text-gray-800">
                   {product.name}

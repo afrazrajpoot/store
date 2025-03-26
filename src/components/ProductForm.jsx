@@ -5,11 +5,16 @@ import { useGlobalContext } from "@/app/context/GlobalState";
 import { formFields } from "@/data";
 import { PlusCircle, X, Upload } from "lucide-react";
 import { useRouter } from "next/navigation";
+
 const ProductForm = () => {
   const [addProduct, { isLoading, isError, error }] = useAddProductMutation();
   const { stocks, setStocks } = useGlobalContext();
   const [colors, setColors] = useState([""]);
   const [colorInput, setColorInput] = useState("");
+
+  // New state for image previews
+  const [mainImagePreview, setMainImagePreview] = useState(null);
+  const [hoverImagesPreview, setHoverImagesPreview] = useState([]);
 
   const initialFormState = {
     name: "",
@@ -36,6 +41,7 @@ const ProductForm = () => {
 
   const [formData, setFormData] = useState(initialFormState);
   const router = useRouter();
+
   // Initialize stocks if empty
   useEffect(() => {
     if (!stocks || stocks.length === 0) {
@@ -45,7 +51,6 @@ const ProductForm = () => {
     if (user?.user?.role != "admin") {
       router.push("/");
     }
-    // console.log(user);
   }, []);
 
   const handleInputChange = (e) => {
@@ -83,15 +88,59 @@ const ProductForm = () => {
     setFormData((prev) => ({ ...prev, [field]: values }));
   };
 
+  // Update image preview handling
   const handleFileChange = (e) => {
     const { name, files } = e.target;
     if (!files || files.length === 0) return;
 
     if (name === "image") {
-      setFormData((prev) => ({ ...prev, image: files[0] }));
+      const file = files[0];
+      setFormData((prev) => ({ ...prev, image: file }));
+
+      // Create preview for main image
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setMainImagePreview(reader.result);
+      };
+      reader.readAsDataURL(file);
     } else if (name === "hoverImages") {
-      setFormData((prev) => ({ ...prev, hoverImages: Array.from(files) }));
+      const filesArray = Array.from(files);
+      setFormData((prev) => ({ ...prev, hoverImages: filesArray }));
+
+      // Create previews for hover images
+      const previews = [];
+      filesArray.forEach((file) => {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          previews.push(reader.result);
+          if (previews.length === filesArray.length) {
+            setHoverImagesPreview(previews);
+          }
+        };
+        reader.readAsDataURL(file);
+      });
     }
+  };
+
+  // Image preview removal functions
+  const removeMainImagePreview = () => {
+    setMainImagePreview(null);
+    setFormData((prev) => ({ ...prev, image: null }));
+    // Reset file input
+    const input = document.querySelector('input[name="image"]');
+    if (input) input.value = "";
+  };
+
+  const removeHoverImagePreview = (indexToRemove) => {
+    const updatedPreviews = hoverImagesPreview.filter(
+      (_, index) => index !== indexToRemove
+    );
+    const updatedHoverImages = formData.hoverImages.filter(
+      (_, index) => index !== indexToRemove
+    );
+
+    setHoverImagesPreview(updatedPreviews);
+    setFormData((prev) => ({ ...prev, hoverImages: updatedHoverImages }));
   };
 
   // Stock Management Functions
@@ -230,6 +279,8 @@ const ProductForm = () => {
       setStocks([{ size: "S", color: "", quantity: "0" }]);
       setColors([""]);
       setColorInput("");
+      setMainImagePreview(null);
+      setHoverImagesPreview([]);
 
       // Reset file inputs
       document.querySelectorAll('input[type="file"]').forEach((input) => {
@@ -308,38 +359,93 @@ const ProductForm = () => {
               <h3 className="text-xl font-semibold text-gray-800">Media</h3>
 
               <div className="space-y-4">
+                {/* Main Image Upload */}
                 <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-blue-500 transition-colors">
-                  <Upload className="mx-auto h-12 w-12 text-gray-400" />
-                  <label className="block mt-2">
-                    <span className="text-sm font-medium text-gray-700">
-                      Main Image
-                    </span>
-                    <input
-                      type="file"
-                      name="image"
-                      onChange={handleFileChange}
-                      className="block w-full mt-2 text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
-                      accept="image/*"
-                      required
-                    />
-                  </label>
+                  {mainImagePreview ? (
+                    <div className="relative">
+                      <img
+                        src={mainImagePreview}
+                        alt="Main Product Preview"
+                        className="mx-auto max-h-64 object-contain rounded-lg"
+                      />
+                      <button
+                        type="button"
+                        onClick={removeMainImagePreview}
+                        className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1"
+                      >
+                        <X className="h-5 w-5" />
+                      </button>
+                    </div>
+                  ) : (
+                    <>
+                      <Upload className="mx-auto h-12 w-12 text-gray-400" />
+                      <label className="block mt-2">
+                        <span className="text-sm font-medium text-gray-700">
+                          Main Image
+                        </span>
+                        <input
+                          type="file"
+                          name="image"
+                          onChange={handleFileChange}
+                          className="block w-full mt-2 text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                          accept="image/*"
+                          required
+                        />
+                      </label>
+                    </>
+                  )}
                 </div>
 
+                {/* Hover Images Upload */}
                 <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-blue-500 transition-colors">
-                  <Upload className="mx-auto h-12 w-12 text-gray-400" />
-                  <label className="block mt-2">
-                    <span className="text-sm font-medium text-gray-700">
-                      Hover Images
-                    </span>
-                    <input
-                      type="file"
-                      name="hoverImages"
-                      onChange={handleFileChange}
-                      className="block w-full mt-2 text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
-                      accept="image/*"
-                      multiple
-                    />
-                  </label>
+                  {hoverImagesPreview.length > 0 ? (
+                    <div className="grid grid-cols-3 gap-4">
+                      {hoverImagesPreview.map((preview, index) => (
+                        <div key={index} className="relative">
+                          <img
+                            src={preview}
+                            alt={`Hover Image ${index + 1}`}
+                            className="mx-auto max-h-32 object-contain rounded-lg"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => removeHoverImagePreview(index)}
+                            className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1"
+                          >
+                            <X className="h-4 w-4" />
+                          </button>
+                        </div>
+                      ))}
+                      <label className="flex items-center justify-center border-2 border-dashed border-gray-300 rounded-lg p-4 hover:border-blue-500">
+                        <PlusCircle className="h-8 w-8 text-gray-400" />
+                        <input
+                          type="file"
+                          name="hoverImages"
+                          onChange={handleFileChange}
+                          className="hidden"
+                          accept="image/*"
+                          multiple
+                        />
+                      </label>
+                    </div>
+                  ) : (
+                    <>
+                      <Upload className="mx-auto h-12 w-12 text-gray-400" />
+                      <label className="block mt-2">
+                        <span className="text-sm font-medium text-gray-700">
+                          Hover Images
+                        </span>
+                        <input
+                          type="file"
+                          name="hoverImages"
+                          onChange={handleFileChange}
+                          className="block w-full mt-2 text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                          accept="image/*"
+                          multiple
+                        />
+                      </label>
+                    </>
+                  )}
                 </div>
               </div>
             </div>
