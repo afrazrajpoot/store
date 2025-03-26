@@ -51,7 +51,7 @@ export const metadata = {
     title: "Roshni Store - Fashion Redefined",
     description:
       "Shop stylish and premium-quality clothing for every occasion at Roshni Store.",
-    images: ["https://roshnistore.com/og-image.jpg"], // Replace with actual OG image URL
+    images: ["https://roshnistore.com/og-image.jpg"], // Replace w ith actual OG image URL
   },
 };
 

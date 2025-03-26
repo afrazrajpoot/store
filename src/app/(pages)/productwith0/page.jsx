@@ -1,21 +1,30 @@
-'use client'
-import { motion } from 'framer-motion'
-import Products from '@/components/Products'
-import { useGetProduct0Query } from '@/store/storeApi'
+"use client";
+import { motion } from "framer-motion";
+import Products from "@/components/Products";
+import { useGetProduct0Query } from "@/store/storeApi";
+import React, { useEffect } from "react";
+import { useRouter } from "next/navigation";
 
 const ProductPage = () => {
-  const { data, isLoading, isError } = useGetProduct0Query()
-  
+  const { data, isLoading, isError } = useGetProduct0Query();
+  const router = useRouter();
+
+  useEffect(() => {
+    const user = JSON.parse(localStorage.getItem("user"));
+    if (user?.user?.role != "admin") {
+      router.push("/");
+    }
+  }, []);
   // Container animation variants
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.1
-      }
-    }
-  }
+        staggerChildren: 0.1,
+      },
+    },
+  };
 
   // Loading skeleton component
   const LoadingSkeleton = () => (
@@ -30,7 +39,7 @@ const ProductPage = () => {
         />
       ))}
     </div>
-  )
+  );
 
   // Error or empty state component
   const EmptyState = ({ message }) => (
@@ -40,7 +49,7 @@ const ProductPage = () => {
       className="flex flex-col items-center justify-center min-h-[400px] text-center px-4"
     >
       <div className="bg-gray-100 p-8 rounded-full mb-6">
-        <svg 
+        <svg
           className="w-16 h-16 text-gray-400"
           fill="none"
           strokeLinecap="round"
@@ -52,17 +61,19 @@ const ProductPage = () => {
           <path d="M20 12H4M12 4v16" />
         </svg>
       </div>
-      <h3 className="text-xl font-semibold text-gray-800 mb-2">No Products Found</h3>
+      <h3 className="text-xl font-semibold text-gray-800 mb-2">
+        No Products Found
+      </h3>
       <p className="text-gray-600">{message}</p>
     </motion.div>
-  )
+  );
 
   if (isLoading) {
     return (
       <div className="container mx-auto px-4 py-8">
         <LoadingSkeleton />
       </div>
-    )
+    );
   }
 
   if (isError) {
@@ -70,7 +81,7 @@ const ProductPage = () => {
       <div className="container mx-auto px-4 py-8">
         <EmptyState message="There was an error loading the products. Please try again later." />
       </div>
-    )
+    );
   }
 
   if (!data || data.length === 0) {
@@ -78,7 +89,7 @@ const ProductPage = () => {
       <div className="container mx-auto px-4 py-8">
         <EmptyState message="Currently there are no products available with quantity in stock." />
       </div>
-    )
+    );
   }
 
   return (
@@ -92,7 +103,7 @@ const ProductPage = () => {
         <Products data={data} />
       </motion.div>
     </div>
-  )
-}
+  );
+};
 
-export default ProductPage
+export default ProductPage;

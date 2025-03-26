@@ -1,42 +1,49 @@
-'use client'
-import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Upload, X, Image as ImageIcon, CheckCircle, AlertCircle, Loader } from 'lucide-react';
+"use client";
+import React, { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import {
+  Upload,
+  X,
+  Image as ImageIcon,
+  CheckCircle,
+  AlertCircle,
+  Loader,
+} from "lucide-react";
+import { useRouter } from "next/navigation";
 
 const HeroImageUpload = () => {
   const [images, setImages] = useState([]);
+  const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
   const handleFileChange = (e) => {
-    const files = [...e.target.files].filter(file => 
-      file.type.startsWith('image/')
+    const files = [...e.target.files].filter((file) =>
+      file.type.startsWith("image/")
     );
-    
-  
-    
+
     // Only store the files, don't upload yet
-    setImages(prev => [...prev, ...files].slice(0, 3));
+    setImages((prev) => [...prev, ...files].slice(0, 3));
     setError(null);
     setSuccess(false); // Reset success state when new files are added
   };
 
   const removeImage = (index) => {
-    setImages(prev => prev.filter((_, i) => i !== index));
+    setImages((prev) => prev.filter((_, i) => i !== index));
     setError(null);
     setSuccess(false);
   };
 
   const handleUpload = async () => {
     if (images.length === 0) {
-      setError('Please select at least one image');
+      setError("Please select at least one image");
       return;
     }
 
     try {
       setIsLoading(true);
       setError(null);
-      
+
       // Create FormData and append images with specific keys
       const formData = new FormData();
       images.forEach((image, index) => {
@@ -44,15 +51,15 @@ const HeroImageUpload = () => {
         formData.append(`image${index + 1}`, image);
       });
 
-      const response = await fetch('/api/uploadHeroImages', {
-        method: 'POST',
+      const response = await fetch("/api/uploadHeroImages", {
+        method: "POST",
         body: formData,
       });
 
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error || 'Upload failed');
+        throw new Error(data.error || "Upload failed");
       }
 
       setSuccess(true);
@@ -60,13 +67,18 @@ const HeroImageUpload = () => {
       // Optionally clear images after successful upload
       setImages([]);
     } catch (err) {
-      setError(err.message || 'Error uploading images');
+      setError(err.message || "Error uploading images");
       setSuccess(false);
     } finally {
       setIsLoading(false);
     }
   };
-
+  useEffect(() => {
+    const user = JSON.parse(localStorage.getItem("user"));
+    if (user?.user?.role != "admin") {
+      router.push("/");
+    }
+  }, []);
   return (
     <div className="min-h-screen bg-gray-50 p-8">
       <motion.div
@@ -75,8 +87,10 @@ const HeroImageUpload = () => {
         className="max-w-3xl mx-auto"
       >
         <div className="bg-white rounded-lg shadow-md p-6">
-          <h2 className="text-2xl font-semibold text-gray-800 mb-6">Upload Hero Images</h2>
-          
+          <h2 className="text-2xl font-semibold text-gray-800 mb-6">
+            Upload Hero Images
+          </h2>
+
           <div className="space-y-4">
             <div className="border-2 border-dashed border-gray-300 rounded-lg p-6">
               <input
@@ -88,11 +102,11 @@ const HeroImageUpload = () => {
                 id="file-upload"
                 disabled={images.length >= 3}
               />
-              
+
               <label
                 htmlFor="file-upload"
                 className={`flex flex-col items-center justify-center cursor-pointer ${
-                  images.length >= 3 ? 'opacity-50 cursor-not-allowed' : ''
+                  images.length >= 3 ? "opacity-50 cursor-not-allowed" : ""
                 }`}
               >
                 <motion.div
@@ -103,9 +117,9 @@ const HeroImageUpload = () => {
                   <Upload className="w-8 h-8 text-blue-500" />
                 </motion.div>
                 <p className="text-lg font-medium text-gray-700">
-                  {images.length >= 3 
-                    ? 'Maximum 3 images selected' 
-                    : 'Click to select hero images'}
+                  {images.length >= 3
+                    ? "Maximum 3 images selected"
+                    : "Click to select hero images"}
                 </p>
                 <p className="text-sm text-gray-500 mt-2">
                   {`${3 - images.length} slots remaining`}
@@ -167,7 +181,9 @@ const HeroImageUpload = () => {
                   className="flex items-center justify-center space-x-2 p-4 bg-green-50 rounded-lg"
                 >
                   <CheckCircle className="w-5 h-5 text-green-500" />
-                  <span className="text-green-700">Hero images uploaded successfully!</span>
+                  <span className="text-green-700">
+                    Hero images uploaded successfully!
+                  </span>
                 </motion.div>
               )}
             </AnimatePresence>
@@ -179,9 +195,10 @@ const HeroImageUpload = () => {
               onClick={handleUpload}
               disabled={isLoading || images.length === 0}
               className={`w-full py-3 px-4 rounded-lg font-medium text-white 
-                ${isLoading || images.length === 0 
-                  ? 'bg-blue-300 cursor-not-allowed' 
-                  : 'bg-blue-500 hover:bg-blue-600'
+                ${
+                  isLoading || images.length === 0
+                    ? "bg-blue-300 cursor-not-allowed"
+                    : "bg-blue-500 hover:bg-blue-600"
                 }
                 transition-colors duration-200 flex items-center justify-center space-x-2`}
             >

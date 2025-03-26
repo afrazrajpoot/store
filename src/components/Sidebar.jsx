@@ -23,6 +23,7 @@ const Sidebar = () => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [openSubmenu, setOpenSubmenu] = useState(null);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [user, setUser] = useState(null);
   const router = useRouter();
   const pathName = usePathname();
   const sidebarRef = useRef(null);
@@ -31,6 +32,10 @@ const Sidebar = () => {
   useEffect(() => {
     const userRole = JSON.parse(localStorage.getItem("user"));
     setIsAdmin(userRole?.user?.role === "admin");
+    const user = JSON.parse(localStorage.getItem("user"));
+    if (user) {
+      setUser(user);
+    }
   }, []);
 
   const mainRoutes = [
@@ -232,8 +237,14 @@ const Sidebar = () => {
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               onClick={() => {
-                router.push("/login");
-                setIsExpanded(false);
+                if (!user) {
+                  router.push("/login");
+                  setIsExpanded(false);
+                } else {
+                  localStorage.removeItem("user");
+                  router.push("/login");
+                  setIsExpanded(false);
+                }
               }}
             >
               <LogIn className="h-5 w-5" />
@@ -245,7 +256,7 @@ const Sidebar = () => {
                     animate="expanded"
                     exit="collapsed"
                   >
-                    Login
+                    {user ? "logout" : "login"}
                   </motion.span>
                 )}
               </AnimatePresence>
