@@ -2,15 +2,18 @@
 const nextConfig = {
   experimental: {
     serverActions: {
-      bodySizeLimit: "10mb", // Increase to 10 MB
+      bodySizeLimit: "10mb",
     },
     eslint: {
       ignoreDuringBuilds: true,
     },
   },
   images: {
-    unoptimized: true, // Ensures Next.js serves local images
+    unoptimized: true,
+    domains: ["roshnistore.com"], // Add your domain here
+    path: "https://roshnistore.com", // Base path for images
   },
+  trailingSlash: true, // Helps with some routing issues
 };
 
 export default nextConfig;
