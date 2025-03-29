@@ -146,7 +146,7 @@ const ProductPage = ({ params }) => {
                   <AntImage.PreviewGroup>
                     <div className="overflow-hidden bg-gray-50 shadow-lg hover:shadow-xl transition-shadow duration-300">
                       <AntImage
-                        src={img}
+                        src={`/api/uploads?filename=${img}`}
                         alt={`${product.name} ${index + 1}`}
                         className="w-full object-contain"
                         preview={{
