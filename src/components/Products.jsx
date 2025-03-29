@@ -12,7 +12,7 @@ const Products = ({ data, userRole, deleteProduct }) => {
       {data?.map((product, index) => {
         // Define paths with default fallback
         const mainImagePath = product.image
-          ? `${product.image}`
+          ? `${process.env.NEXT_PUBLIC_BASE_URL}/${product.image}`
           : "/uploads/1737204160962-Screenshotfrom2024-09-1315-46-37.png";
 
         const hoverImagePath = product.hoverImages?.length
