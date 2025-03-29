@@ -1,10 +1,12 @@
 "use client";
-import Footer from "@/components/Footer";
-import HeroSection from "@/components/HeroSection";
-import NewsLetter from "@/components/NewsLetter";
-import Products from "@/components/Products";
-import { shopData } from "@/data";
-import { useGetImagesQuery, useGetProductsQuery } from "@/store/storeApi";
+import HeroSection from "../components/HeroSection";
+import Products from "../components/Products";
+// import Footer from "@/components/Footer";
+// import HeroSection from "@/components/HeroSection";
+// import NewsLetter from "@/components/NewsLetter";
+// import Products from "@/components/Products";
+// import { shopData } from "@/data";
+import { useGetImagesQuery, useGetProductsQuery } from "../store/storeApi";
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 

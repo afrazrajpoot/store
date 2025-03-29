@@ -1,8 +1,9 @@
 import { NextResponse } from "next/server";
-import Product from "@/app/models/productModal";
+// import Product from "./app/models/productModal";
 import path from "path";
-import { connection } from "@/app/utils/db";
+import { connection } from "../../../app/utils/db";
 import { promises as fs } from "fs";
+import Product from "../../../app/models/productModal";
 
 export async function POST(request) {
   try {
@@ -12,13 +13,9 @@ export async function POST(request) {
     // Get the formData from the request
     const formData = await request.formData();
 
-    // Ensure uploads directory exists
-    const uploadsDir = path.join(process.cwd(), "public");
-    try {
-      await fs.mkdir(uploadsDir, { recursive: true });
-    } catch (err) {
-      if (err.code !== "EEXIST") throw err;
-    }
+    // Ensure uploads directory exists in the root
+    const uploadsDir = path.join(process.cwd(), "uploads");
+    await fs.mkdir(uploadsDir, { recursive: true });
 
     // Process main image
     const mainImage = formData.get("image");
@@ -32,7 +29,7 @@ export async function POST(request) {
       )}`;
       const imagePath = path.join(uploadsDir, filename);
       await fs.writeFile(imagePath, buffer);
-      mainImagePath = `/${filename}`;
+      mainImagePath = `${filename}`; // Updated path
     }
 
     // Process hover images
@@ -47,7 +44,7 @@ export async function POST(request) {
         )}`;
         const imagePath = path.join(uploadsDir, filename);
         await fs.writeFile(imagePath, buffer);
-        return `/${filename}`;
+        return `${filename}`; // Updated path
       })
     );
 
@@ -83,7 +80,7 @@ export async function POST(request) {
       tags: parseJSON(formData.get("tags")),
     };
 
-    // Create new product
+    // Create new product in database
     const product = await Product.create(productData);
 
     return NextResponse.json(
@@ -141,7 +138,7 @@ export async function PATCH(request) {
     }
 
     // Ensure uploads directory exists
-    const uploadsDir = path.join(process.cwd(), "public", "uploads");
+    const uploadsDir = path.join(process.cwd(), "uploads");
     await fs.mkdir(uploadsDir, { recursive: true });
 
     // Handle main image update
@@ -169,7 +166,7 @@ export async function PATCH(request) {
         }
       }
 
-      mainImagePath = `/uploads/${filename}`;
+      mainImagePath = `${filename}`;
     }
 
     // Handle hover images update
@@ -187,7 +184,7 @@ export async function PATCH(request) {
           )}`;
           const imagePath = path.join(uploadsDir, filename);
           await fs.writeFile(imagePath, buffer);
-          return `/uploads/${filename}`;
+          return `${filename}`;
         })
       );
 

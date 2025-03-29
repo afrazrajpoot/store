@@ -12,12 +12,12 @@ const Products = ({ data, userRole, deleteProduct }) => {
       {data?.map((product, index) => {
         // Define paths with default fallback
         const mainImagePath = product.image
-          ? `${process.env.NEXT_PUBLIC_BASE_URL}/${product.image}`
-          : "/uploads/1737204160962-Screenshotfrom2024-09-1315-46-37.png";
+          ? `/api/uploads?filename=${product.image}`
+          : "";
 
         const hoverImagePath = product.hoverImages?.length
-          ? product.hoverImages.map((img) => `${img}`)
-          : [`/uploads/1737204160962-Screenshotfrom2024-09-1315-46-37.png`];
+          ? product.hoverImages.map((img) => `/api/uploads?filename=${img}`)
+          : [``];
 
         return (
           <Link href={`/product/${product._id}`} key={product._id}>

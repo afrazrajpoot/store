@@ -16,7 +16,7 @@ import {
   Settings,
 } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
-import { useGetProductsQuery } from "@/store/storeApi";
+import { useGetProductsQuery } from "../store/storeApi";
 import Link from "next/link";
 
 const Sidebar = () => {

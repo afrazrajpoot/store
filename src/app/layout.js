@@ -1,12 +1,12 @@
 // app/layout.jsx
 import localFont from "next/font/local";
 import "./globals.css";
-import Providers from "@/redux/Providers";
-import Sidebar from "@/components/Sidebar";
-import Footer from "@/components/Footer";
+import Providers from "../redux/Providers";
+import Sidebar from "../components/Sidebar";
+import Footer from "../components/Footer";
 import { GlobalProvider } from "./context/GlobalState";
 import { Inter } from "next/font/google";
-import Header from "@/components/Header";
+import Header from "../components/Header";
 import { Toaster } from "sonner";
 
 // Load Inter font for primary text

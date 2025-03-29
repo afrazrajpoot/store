@@ -1,8 +1,8 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { useAddProductMutation } from "@/store/storeApi";
-import { useGlobalContext } from "@/app/context/GlobalState";
-import { formFields } from "@/data";
+import { useAddProductMutation } from "../store/storeApi";
+import { useGlobalContext } from "../app/context/GlobalState";
+import { formFields } from "../data";
 import { PlusCircle, X, Upload } from "lucide-react";
 import { useRouter } from "next/navigation";
 
