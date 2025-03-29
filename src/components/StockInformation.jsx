@@ -1,5 +1,5 @@
-import { useGlobalContext } from '@/app/context/GlobalState';
-import React, { useEffect } from 'react';
+import { useGlobalContext } from "../app/context/GlobalState";
+import React, { useEffect } from "react";
 
 const StockInformation = () => {
   const { stocks, setStocks } = useGlobalContext();
@@ -7,7 +7,7 @@ const StockInformation = () => {
   // Initialize stocks properly when component mounts
   useEffect(() => {
     if (!stocks || stocks.length === 0) {
-      setStocks([{ size: '', quantity: '' }]);
+      setStocks([{ size: "", quantity: "" }]);
     }
   }, [stocks, setStocks]);
 
@@ -15,7 +15,7 @@ const StockInformation = () => {
     const updatedStocks = [...stocks];
     updatedStocks[index] = {
       ...updatedStocks[index],
-      [field]: value
+      [field]: value,
     };
     setStocks(updatedStocks);
   };
@@ -23,7 +23,7 @@ const StockInformation = () => {
   const addStock = (e) => {
     e.stopPropagation();
     e.preventDefault();
-    setStocks([...stocks, { size: '', quantity: '' }]);
+    setStocks([...stocks, { size: "", quantity: "" }]);
   };
 
   const removeStock = (index, e) => {
@@ -31,7 +31,7 @@ const StockInformation = () => {
     e.preventDefault();
     const updatedStocks = stocks.filter((_, i) => i !== index);
     if (updatedStocks.length === 0) {
-      setStocks([{ size: '', quantity: '' }]);
+      setStocks([{ size: "", quantity: "" }]);
     } else {
       setStocks(updatedStocks);
     }
@@ -44,11 +44,11 @@ const StockInformation = () => {
   return (
     <div className="max-w-2xl mx-auto p-4 space-y-6">
       <h3 className="text-lg font-semibold text-gray-800">Stock Information</h3>
-      
+
       <div className="space-y-4">
         {stocks.map((stock, index) => (
-          <div 
-            key={index} 
+          <div
+            key={index}
             className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 space-y-3 relative"
           >
             <button
@@ -65,8 +65,10 @@ const StockInformation = () => {
               </label>
               <input
                 type="text"
-                value={stock.size || ''}
-                onChange={(e) => handleInputChange(index, 'size', e.target.value)}
+                value={stock.size || ""}
+                onChange={(e) =>
+                  handleInputChange(index, "size", e.target.value)
+                }
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
                 placeholder="Enter size"
               />
@@ -78,8 +80,10 @@ const StockInformation = () => {
               </label>
               <input
                 type="number"
-                value={stock.quantity || ''}
-                onChange={(e) => handleInputChange(index, 'quantity', e.target.value)}
+                value={stock.quantity || ""}
+                onChange={(e) =>
+                  handleInputChange(index, "quantity", e.target.value)
+                }
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
                 placeholder="Enter quantity"
                 min="0"

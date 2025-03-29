@@ -1,17 +1,25 @@
-'use client'
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import { 
-  Lock, Mail, Eye, EyeOff, ArrowRight, 
-  Github, Twitter, Linkedin, Instagram 
-} from 'lucide-react';
-import { useLoginAdminMutation } from '@/store/storeApi';
+"use client";
+import React, { useState } from "react";
+import { motion } from "framer-motion";
+import {
+  Lock,
+  Mail,
+  Eye,
+  EyeOff,
+  ArrowRight,
+  Github,
+  Twitter,
+  Linkedin,
+  Instagram,
+} from "lucide-react";
+import { useLoginAdminMutation } from "../../../store/storeApi";
 
 const LoginPage = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [loginUser, { isLoading, isSuccess, isError, error }] = useLoginAdminMutation();
+  const [loginUser, { isLoading, isSuccess, isError, error }] =
+    useLoginAdminMutation();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -21,45 +29,45 @@ const LoginPage = () => {
       const response = await loginUser({ email, password }).unwrap();
 
       // Save the response in localStorage
-      localStorage.setItem('user', JSON.stringify(response));
+      localStorage.setItem("user", JSON.stringify(response));
 
-      console.log('Login successful:', response);
-      alert('Login successful!');
+      console.log("Login successful:", response);
+      alert("Login successful!");
     } catch (err) {
-      console.error('Login failed:', err);
-      alert('Login failed. Please check your credentials.');
+      console.error("Login failed:", err);
+      alert("Login failed. Please check your credentials.");
     }
   };
 
   const containerVariants = {
     hidden: { opacity: 0, scale: 0.9 },
-    visible: { 
-      opacity: 1, 
+    visible: {
+      opacity: 1,
       scale: 1,
-      transition: { 
+      transition: {
         duration: 0.6,
         delayChildren: 0.3,
-        staggerChildren: 0.2 
-      }
-    }
+        staggerChildren: 0.2,
+      },
+    },
   };
 
   const itemVariants = {
     hidden: { y: 20, opacity: 0 },
-    visible: { 
-      y: 0, 
+    visible: {
+      y: 0,
       opacity: 1,
-      transition: { 
-        type: 'spring',
+      transition: {
+        type: "spring",
         stiffness: 120,
-        damping: 10
-      }
-    }
+        damping: 10,
+      },
+    },
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-100 via-purple-100 to-pink-100 flex items-center justify-center p-4">
-      <motion.div 
+      <motion.div
         initial="hidden"
         animate="visible"
         variants={containerVariants}
@@ -67,36 +75,34 @@ const LoginPage = () => {
       >
         {/* Left Side - Creative Section */}
         <div className="bg-gradient-to-br from-indigo-500 to-purple-600 flex flex-col justify-center p-12 text-white relative overflow-hidden">
-          <motion.div 
-            variants={itemVariants}
-            className="z-10 relative"
-          >
+          <motion.div variants={itemVariants} className="z-10 relative">
             <h2 className="text-4xl font-bold mb-4 tracking-tight">
               Start Your Journey
             </h2>
             <p className="text-xl mb-6 opacity-80">
-              Unlock a world of possibilities with a single step. Your adventure begins here.
+              Unlock a world of possibilities with a single step. Your adventure
+              begins here.
             </p>
-            
+
             <div className="flex space-x-4 mt-8">
-              <motion.a 
-                href="#" 
+              <motion.a
+                href="#"
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
                 className="bg-white/20 p-3 rounded-full hover:bg-white/30 transition"
               >
                 <Github className="text-white" size={24} />
               </motion.a>
-              <motion.a 
-                href="#" 
+              <motion.a
+                href="#"
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
                 className="bg-white/20 p-3 rounded-full hover:bg-white/30 transition"
               >
                 <Twitter className="text-white" size={24} />
               </motion.a>
-              <motion.a 
-                href="#" 
+              <motion.a
+                href="#"
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
                 className="bg-white/20 p-3 rounded-full hover:bg-white/30 transition"
@@ -113,7 +119,7 @@ const LoginPage = () => {
 
         {/* Right Side - Login Form */}
         <div className="p-12 flex flex-col justify-center">
-          <motion.h1 
+          <motion.h1
             variants={itemVariants}
             className="text-3xl font-bold text-center text-gray-800 mb-8"
           >
@@ -122,14 +128,11 @@ const LoginPage = () => {
 
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Email Input */}
-            <motion.div 
-              variants={itemVariants}
-              className="relative"
-            >
+            <motion.div variants={itemVariants} className="relative">
               <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                 <Mail className="text-gray-400" size={20} />
               </div>
-              <input 
+              <input
                 type="email"
                 placeholder="Email Address"
                 value={email}
@@ -140,14 +143,11 @@ const LoginPage = () => {
             </motion.div>
 
             {/* Password Input */}
-            <motion.div 
-              variants={itemVariants}
-              className="relative"
-            >
+            <motion.div variants={itemVariants} className="relative">
               <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                 <Lock className="text-gray-400" size={20} />
               </div>
-              <input 
+              <input
                 type={showPassword ? "text" : "password"}
                 placeholder="Password"
                 value={password}
@@ -165,21 +165,27 @@ const LoginPage = () => {
             </motion.div>
 
             {/* Remember and Forgot Password */}
-            <motion.div 
+            <motion.div
               variants={itemVariants}
               className="flex justify-between items-center"
             >
               <div className="flex items-center">
-                <input 
-                  type="checkbox" 
-                  id="remember" 
+                <input
+                  type="checkbox"
+                  id="remember"
                   className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
                 />
-                <label htmlFor="remember" className="ml-2 text-sm text-gray-600">
+                <label
+                  htmlFor="remember"
+                  className="ml-2 text-sm text-gray-600"
+                >
                   Remember me
                 </label>
               </div>
-              <a href="#" className="text-sm text-indigo-600 hover:text-indigo-700 transition duration-300">
+              <a
+                href="#"
+                className="text-sm text-indigo-600 hover:text-indigo-700 transition duration-300"
+              >
                 Forgot password?
               </a>
             </motion.div>
@@ -193,13 +199,13 @@ const LoginPage = () => {
               disabled={isLoading}
               className="w-full flex items-center justify-center py-4 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-xl hover:from-indigo-600 hover:to-purple-700 transition duration-300 space-x-2 shadow-lg hover:shadow-xl"
             >
-              <span>{isLoading ? 'Signing In...' : 'Sign In'}</span>
+              <span>{isLoading ? "Signing In..." : "Sign In"}</span>
               {!isLoading && <ArrowRight size={20} />}
             </motion.button>
           </form>
 
           {/* Divider */}
-          <motion.div 
+          <motion.div
             variants={itemVariants}
             className="flex items-center justify-center space-x-4 my-6"
           >
@@ -209,14 +215,14 @@ const LoginPage = () => {
           </motion.div>
 
           {/* Social Login */}
-          <motion.div 
+          <motion.div
             variants={itemVariants}
             className="flex justify-center space-x-4"
           >
             {[
-              { Icon: Instagram, color: 'text-pink-500' },
-              { Icon: Twitter, color: 'text-blue-400' },
-              { Icon: Github, color: 'text-gray-800' }
+              { Icon: Instagram, color: "text-pink-500" },
+              { Icon: Twitter, color: "text-blue-400" },
+              { Icon: Github, color: "text-gray-800" },
             ].map(({ Icon, color }, index) => (
               <motion.button
                 key={index}
@@ -230,12 +236,15 @@ const LoginPage = () => {
           </motion.div>
 
           {/* Sign Up Link */}
-          <motion.p 
+          <motion.p
             variants={itemVariants}
             className="text-center mt-6 text-sm text-gray-600"
           >
-            Don't have an account? {" "}
-            <a href="#" className="text-indigo-600 hover:text-indigo-700 transition">
+            Don't have an account?{" "}
+            <a
+              href="#"
+              className="text-indigo-600 hover:text-indigo-700 transition"
+            >
               Sign Up
             </a>
           </motion.p>

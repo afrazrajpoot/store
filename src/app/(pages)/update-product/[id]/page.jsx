@@ -1,18 +1,26 @@
-'use client'
-import React, { useState, useEffect } from 'react';
-import { useUpdateProductMutation, useGetProductByIdQuery } from "@/store/storeApi";
-import { useGlobalContext } from '@/app/context/GlobalState';
-import { formFields } from '@/data';
-import { PlusCircle, X, Upload } from 'lucide-react';
-import { useParams } from 'next/navigation';
+"use client";
+import React, { useState, useEffect } from "react";
+import {
+  useUpdateProductMutation,
+  useGetProductByIdQuery,
+} from "../../../../store/storeApi";
+import { useGlobalContext } from "../../../../app/context/GlobalState";
+import { formFields } from "../../../data";
+import { PlusCircle, X, Upload } from "lucide-react";
+import { useParams } from "next/navigation";
 
 const UpdateProductForm = () => {
   const { id } = useParams(); // Get the product ID from the URL
-  const { data: product, isLoading: isProductLoading, isError: isProductError } = useGetProductByIdQuery(id);
-  const [updateProduct, { isLoading, isError, error }] = useUpdateProductMutation();
+  const {
+    data: product,
+    isLoading: isProductLoading,
+    isError: isProductError,
+  } = useGetProductByIdQuery(id);
+  const [updateProduct, { isLoading, isError, error }] =
+    useUpdateProductMutation();
   const { stocks, setStocks } = useGlobalContext();
-  const [colors, setColors] = useState(['']);
-  const [colorInput, setColorInput] = useState('');
+  const [colors, setColors] = useState([""]);
+  const [colorInput, setColorInput] = useState("");
 
   const initialFormState = {
     name: "",
@@ -31,10 +39,10 @@ const UpdateProductForm = () => {
     reviews: "",
     specifications: {
       fit: "",
-      gender: ''
+      gender: "",
     },
     discountPrice: "",
-    tags: []
+    tags: [],
   };
 
   const [formData, setFormData] = useState(initialFormState);
@@ -51,14 +59,16 @@ const UpdateProductForm = () => {
       });
 
       // Ensure color is an array in each stock item
-      const initialStocks = product.stock || [{ size: 'S', color: [''], quantity: '0' }];
-      const formattedStocks = initialStocks.map(stock => ({
+      const initialStocks = product.stock || [
+        { size: "S", color: [""], quantity: "0" },
+      ];
+      const formattedStocks = initialStocks.map((stock) => ({
         ...stock,
-        color: Array.isArray(stock.color) ? stock.color : [stock.color || '']
+        color: Array.isArray(stock.color) ? stock.color : [stock.color || ""],
       }));
 
       setStocks(formattedStocks);
-      setColors(product.colors || ['']);
+      setColors(product.colors || [""]);
 
       // Set image previews
       if (product.image) {
@@ -75,34 +85,34 @@ const UpdateProductForm = () => {
     const { name, value, type } = e.target;
 
     // Handle specifications fields
-    if (name.startsWith('specifications.')) {
-      const [_, field] = name.split('.');
-      setFormData(prev => ({
+    if (name.startsWith("specifications.")) {
+      const [_, field] = name.split(".");
+      setFormData((prev) => ({
         ...prev,
         specifications: {
           ...prev.specifications,
-          [field]: value
-        }
+          [field]: value,
+        },
       }));
       return;
     }
 
     // Handle number inputs
-    if (type === 'number') {
-      const numberValue = value === '' ? '' : Number(value);
-      setFormData(prev => ({ ...prev, [name]: numberValue }));
+    if (type === "number") {
+      const numberValue = value === "" ? "" : Number(value);
+      setFormData((prev) => ({ ...prev, [name]: numberValue }));
       return;
     }
 
     // Handle regular inputs
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   // Handle file input change for main image
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      setFormData(prev => ({ ...prev, image: file }));
+      setFormData((prev) => ({ ...prev, image: file }));
       setImagePreview(URL.createObjectURL(file)); // Create a preview URL for the uploaded file
     }
   };
@@ -111,8 +121,8 @@ const UpdateProductForm = () => {
   const handleHoverImagesChange = (e) => {
     const files = Array.from(e.target.files);
     if (files.length > 0) {
-      setFormData(prev => ({ ...prev, hoverImages: files }));
-      const previews = files.map(file => URL.createObjectURL(file));
+      setFormData((prev) => ({ ...prev, hoverImages: files }));
+      const previews = files.map((file) => URL.createObjectURL(file));
       setHoverImagesPreview(previews);
     }
   };
@@ -122,21 +132,21 @@ const UpdateProductForm = () => {
     const updatedStocks = [...stocks];
 
     // If the field is color, convert comma-separated string to array
-    if (field === 'color') {
+    if (field === "color") {
       const colorArray = value
-        .split(',')
-        .map(color => color.trim())
-        .filter(color => color !== '');
+        .split(",")
+        .map((color) => color.trim())
+        .filter((color) => color !== "");
 
       updatedStocks[index] = {
         ...updatedStocks[index],
-        [field]: colorArray // Store as array
+        [field]: colorArray, // Store as array
       };
     } else {
       // Handle other fields normally
       updatedStocks[index] = {
         ...updatedStocks[index],
-        [field]: value
+        [field]: value,
       };
     }
 
@@ -144,7 +154,7 @@ const UpdateProductForm = () => {
   };
 
   const addStock = () => {
-    setStocks([...stocks, { size: '', color: [''], quantity: '0' }]);
+    setStocks([...stocks, { size: "", color: [""], quantity: "0" }]);
   };
 
   const removeStock = (index) => {
@@ -159,34 +169,40 @@ const UpdateProductForm = () => {
     if (colorInput && !colors.includes(colorInput)) {
       const updatedColors = [...colors, colorInput];
       setColors(updatedColors);
-      setColorInput('');
-      setFormData(prev => ({ ...prev, colors: updatedColors }));
+      setColorInput("");
+      setFormData((prev) => ({ ...prev, colors: updatedColors }));
     }
   };
 
   const removeColor = (index) => {
     const updatedColors = colors.filter((_, i) => i !== index);
-    setColors(updatedColors.length ? updatedColors : ['']);
-    setFormData(prev => ({ ...prev, colors: updatedColors }));
+    setColors(updatedColors.length ? updatedColors : [""]);
+    setFormData((prev) => ({ ...prev, colors: updatedColors }));
   };
 
   // Validate form before submission
   const validateForm = () => {
-    const requiredFields = ['name', 'price', 'category'];
+    const requiredFields = ["name", "price", "category"];
     const errors = [];
 
-    requiredFields.forEach(field => {
+    requiredFields.forEach((field) => {
       if (!formData[field]) {
         errors.push(`${field} is required`);
       }
     });
 
     if (!formData.image && !product?.image) {
-      errors.push('Main image is required');
+      errors.push("Main image is required");
     }
 
-    if (!stocks || stocks.length === 0 || !stocks.some(stock => stock?.size && stock?.quantity && stock?.color)) {
-      errors.push('At least one valid stock item with size, quantity, and color is required');
+    if (
+      !stocks ||
+      stocks.length === 0 ||
+      !stocks.some((stock) => stock?.size && stock?.quantity && stock?.color)
+    ) {
+      errors.push(
+        "At least one valid stock item with size, quantity, and color is required"
+      );
     }
 
     return errors;
@@ -198,75 +214,90 @@ const UpdateProductForm = () => {
 
     const validationErrors = validateForm();
     if (validationErrors.length > 0) {
-        alert('Please fix the following errors:\n' + validationErrors.join('\n'));
-        return;
+      alert("Please fix the following errors:\n" + validationErrors.join("\n"));
+      return;
     }
 
     const formDataToSend = new FormData();
-    formDataToSend.append('id', id);
+    formDataToSend.append("id", id);
 
     // Handle regular fields and nested objects
     Object.entries(formData).forEach(([key, value]) => {
-        // Skip the stock field since we'll handle it separately
-        if (key === 'stock') return;
+      // Skip the stock field since we'll handle it separately
+      if (key === "stock") return;
 
-        if (key === "hoverImages") {
-            Array.from(value).forEach(file => {
-                formDataToSend.append("hoverImages", file);
-            });
-        } else if (key === "image") {
-            if (value) {
-                formDataToSend.append("image", value);
-            }
-        } else if (key === "specifications") {
-            formDataToSend.append(key, JSON.stringify(value));
-        } else if (Array.isArray(value)) {
-            formDataToSend.append(key, JSON.stringify(value));
-        } else {
-            formDataToSend.append(key, value?.toString() || '');
+      if (key === "hoverImages") {
+        Array.from(value).forEach((file) => {
+          formDataToSend.append("hoverImages", file);
+        });
+      } else if (key === "image") {
+        if (value) {
+          formDataToSend.append("image", value);
         }
+      } else if (key === "specifications") {
+        formDataToSend.append(key, JSON.stringify(value));
+      } else if (Array.isArray(value)) {
+        formDataToSend.append(key, JSON.stringify(value));
+      } else {
+        formDataToSend.append(key, value?.toString() || "");
+      }
     });
 
     // Handle stocks with color
     const validStocks = stocks
-        .filter(stock => stock && typeof stock === 'object' && stock.size && stock.quantity && stock.color)
-        .map(stock => ({
-            size: stock.size,
-            quantity: Number(stock.quantity),
-            color: stock.color // Include color
-        }));
+      .filter(
+        (stock) =>
+          stock &&
+          typeof stock === "object" &&
+          stock.size &&
+          stock.quantity &&
+          stock.color
+      )
+      .map((stock) => ({
+        size: stock.size,
+        quantity: Number(stock.quantity),
+        color: stock.color, // Include color
+      }));
     formDataToSend.append("stock", JSON.stringify(validStocks));
 
     try {
-        await updateProduct(formDataToSend).unwrap();
-        alert("Product updated successfully!");
+      await updateProduct(formDataToSend).unwrap();
+      alert("Product updated successfully!");
 
-        // Reset form and stocks
-        setFormData(initialFormState);
-        setStocks([{ size: 'S', color: [''], quantity: '0' }]);
-        setColors(['']);
-        setColorInput('');
+      // Reset form and stocks
+      setFormData(initialFormState);
+      setStocks([{ size: "S", color: [""], quantity: "0" }]);
+      setColors([""]);
+      setColorInput("");
 
-        // Reset file inputs
-        document.querySelectorAll('input[type="file"]').forEach(input => {
-            input.value = '';
-        });
+      // Reset file inputs
+      document.querySelectorAll('input[type="file"]').forEach((input) => {
+        input.value = "";
+      });
     } catch (err) {
-        console.error("Error updating product:", err);
-        alert("Failed to update product: " + (err.data?.message || err.message || 'Unknown error occurred'));
+      console.error("Error updating product:", err);
+      alert(
+        "Failed to update product: " +
+          (err.data?.message || err.message || "Unknown error occurred")
+      );
     }
-};
+  };
 
   if (isProductLoading) return <div>Loading...</div>;
   if (isProductError) return <div>Error loading product data</div>;
 
   return (
     <div className="min-h-screen bg-gray-50 py-8 px-4">
-      <form onSubmit={handleSubmit} className="max-w-5xl mx-auto bg-white rounded-xl shadow-lg overflow-hidden">
+      <form
+        onSubmit={handleSubmit}
+        className="max-w-5xl mx-auto bg-white rounded-xl shadow-lg overflow-hidden"
+      >
         {/* Header */}
         <div className="bg-gradient-to-r from-blue-600 to-blue-800 px-8 py-6">
           <h2 className="text-3xl font-bold text-white">Update Product</h2>
-          <p className="text-blue-100 mt-2">Update the details of the product</p>
+          <p className="text-blue-100 mt-2">
+            Update the details of the product
+          </p>
         </div>
 
         <div className="p-8">
@@ -274,16 +305,23 @@ const UpdateProductForm = () => {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {/* Basic Information */}
             <div className="space-y-6">
-              <h3 className="text-xl font-semibold text-gray-800">Basic Information</h3>
+              <h3 className="text-xl font-semibold text-gray-800">
+                Basic Information
+              </h3>
               {formFields.map((field, index) => (
                 <div key={index} className="space-y-2">
                   <label className="text-sm font-medium text-gray-700 block">
-                    {field.label} {field.required && <span className="text-red-500">*</span>}
+                    {field.label}{" "}
+                    {field.required && <span className="text-red-500">*</span>}
                   </label>
-                  {field.type === 'textarea' ? (
+                  {field.type === "textarea" ? (
                     <textarea
                       name={field.name}
-                      value={field.name.includes('.') ? formData.specifications[field.name.split('.')[1]] : formData[field.name] || ''}
+                      value={
+                        field.name.includes(".")
+                          ? formData.specifications[field.name.split(".")[1]]
+                          : formData[field.name] || ""
+                      }
                       onChange={handleInputChange}
                       className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
                       required={field.required}
@@ -293,7 +331,11 @@ const UpdateProductForm = () => {
                     <input
                       type={field.type}
                       name={field.name}
-                      value={field.name.includes('.') ? formData.specifications[field.name.split('.')[1]] : formData[field.name] || ''}
+                      value={
+                        field.name.includes(".")
+                          ? formData.specifications[field.name.split(".")[1]]
+                          : formData[field.name] || ""
+                      }
                       onChange={handleInputChange}
                       className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
                       required={field.required}
@@ -311,7 +353,9 @@ const UpdateProductForm = () => {
               <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-blue-500 transition-colors">
                 <Upload className="mx-auto h-12 w-12 text-gray-400" />
                 <label className="block mt-2">
-                  <span className="text-sm font-medium text-gray-700">Main Image</span>
+                  <span className="text-sm font-medium text-gray-700">
+                    Main Image
+                  </span>
                   <input
                     type="file"
                     name="image"
@@ -322,7 +366,11 @@ const UpdateProductForm = () => {
                 </label>
                 {imagePreview && (
                   <div className="mt-4">
-                    <img src={imagePreview} alt="Main Image Preview" className="w-32 h-32 object-cover rounded-lg" />
+                    <img
+                      src={imagePreview}
+                      alt="Main Image Preview"
+                      className="w-32 h-32 object-cover rounded-lg"
+                    />
                   </div>
                 )}
               </div>
@@ -331,7 +379,9 @@ const UpdateProductForm = () => {
               <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-blue-500 transition-colors">
                 <Upload className="mx-auto h-12 w-12 text-gray-400" />
                 <label className="block mt-2">
-                  <span className="text-sm font-medium text-gray-700">Hover Images</span>
+                  <span className="text-sm font-medium text-gray-700">
+                    Hover Images
+                  </span>
                   <input
                     type="file"
                     name="hoverImages"
@@ -344,7 +394,12 @@ const UpdateProductForm = () => {
                 {hoverImagesPreview.length > 0 && (
                   <div className="mt-4 flex flex-wrap gap-2">
                     {hoverImagesPreview.map((preview, index) => (
-                      <img key={index} src={preview} alt={`Hover Image Preview ${index + 1}`} className="w-16 h-16 object-cover rounded-lg" />
+                      <img
+                        key={index}
+                        src={preview}
+                        alt={`Hover Image Preview ${index + 1}`}
+                        className="w-16 h-16 object-cover rounded-lg"
+                      />
                     ))}
                   </div>
                 )}
@@ -354,42 +409,61 @@ const UpdateProductForm = () => {
 
           {/* Stock Management */}
           <div className="mt-12">
-            <h3 className="text-xl font-semibold text-gray-800 mb-6">Stock Management</h3>
+            <h3 className="text-xl font-semibold text-gray-800 mb-6">
+              Stock Management
+            </h3>
             <div className="space-y-4">
               {stocks.map((stock, index) => (
-                <div key={index} className="bg-gray-50 p-6 rounded-lg relative group">
+                <div
+                  key={index}
+                  className="bg-gray-50 p-6 rounded-lg relative group"
+                >
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div>
-                      <label className="text-sm font-medium text-gray-700 block mb-2">Size</label>
+                      <label className="text-sm font-medium text-gray-700 block mb-2">
+                        Size
+                      </label>
                       <select
                         value={stock.size}
-                        onChange={(e) => handleStockChange(index, 'size', e.target.value)}
+                        onChange={(e) =>
+                          handleStockChange(index, "size", e.target.value)
+                        }
                         className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       >
                         <option value="">Select Size</option>
-                        {['XS', 'S', 'M', 'L', 'XL', 'XXL'].map((size) => (
-                          <option key={size} value={size}>{size}</option>
+                        {["XS", "S", "M", "L", "XL", "XXL"].map((size) => (
+                          <option key={size} value={size}>
+                            {size}
+                          </option>
                         ))}
                       </select>
                     </div>
 
                     <div>
-                      <label className="text-sm font-medium text-gray-700 block mb-2">Quantity</label>
+                      <label className="text-sm font-medium text-gray-700 block mb-2">
+                        Quantity
+                      </label>
                       <input
                         type="number"
                         value={stock?.quantity}
-                        onChange={(e) => handleStockChange(index, 'quantity', e.target.value)}
+                        onChange={(e) =>
+                          handleStockChange(index, "quantity", e.target.value)
+                        }
                         className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         min="0"
                       />
                     </div>
 
                     <div>
-                      <label className="text-sm font-medium text-gray-700 block mb-2">Colors</label>
+                      <label className="text-sm font-medium text-gray-700 block mb-2">
+                        Colors
+                      </label>
                       <input
                         type="text"
-                        value={stock?.color?.join(', ') || ''}
-                        onChange={(e) => handleStockChange(index, 'color', e.target.value)}
+                        value={stock?.color?.join(", ") || ""}
+                        onChange={(e) =>
+                          handleStockChange(index, "color", e.target.value)
+                        }
                         placeholder="Red, Blue, Green"
                         className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       />

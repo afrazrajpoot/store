@@ -1,5 +1,5 @@
-import { connection } from "@/app/utils/db";
-import UserSchema from '@/app/models/user'
+import { connection } from "../../../app/utils/db";
+import UserSchema from "../../../app/models/user";
 import bcrypt from "bcrypt";
 import { NextResponse } from "next/server";
 
@@ -37,7 +37,10 @@ export async function POST(req) {
     }
 
     return NextResponse.json(
-      { message: "Login successful", user: { email: user.email, role: user.role } },
+      {
+        message: "Login successful",
+        user: { email: user.email, role: user.role },
+      },
       { status: 200 }
     );
   } catch (error) {

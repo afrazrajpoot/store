@@ -1,7 +1,7 @@
 "use client";
 import { motion } from "framer-motion";
-import Products from "@/components/Products";
-import { useGetProduct0Query } from "@/store/storeApi";
+import Products from "../../../components/Products";
+import { useGetProduct0Query } from "../../../store/storeApi";
 import React, { useEffect } from "react";
 import { useRouter } from "next/navigation";
 

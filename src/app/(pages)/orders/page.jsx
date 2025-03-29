@@ -1,7 +1,10 @@
 "use client";
 import React, { useEffect, useState, Suspense } from "react";
 import { format } from "date-fns";
-import { useCompleteOrderMutation, useGetOrdersQuery } from "@/store/storeApi";
+import {
+  useCompleteOrderMutation,
+  useGetOrdersQuery,
+} from "../../../store/storeApi";
 import { useRouter, useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -10,7 +13,7 @@ import {
   OrderStatusBadge,
   PaginationControls,
   ShipmentFormModal,
-} from "@/components/orderServices/OrderServices";
+} from "../../../components/orderServices/OrderServices";
 import { X, Send, Truck } from "lucide-react";
 
 const LoadingSpinner = () => (

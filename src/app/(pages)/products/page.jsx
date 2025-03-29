@@ -1,6 +1,6 @@
 "use client";
-import Products from "@/components/Products";
-import { useGetProductsQuery } from "@/store/storeApi";
+import Products from "../../../components/Products";
+import { useGetProductsQuery } from "../../../store/storeApi";
 import { useSearchParams } from "next/navigation";
 import { useState, useEffect, Suspense } from "react";
 import { motion, AnimatePresence } from "framer-motion";

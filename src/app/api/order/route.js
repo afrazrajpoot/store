@@ -1,9 +1,8 @@
+import orderModel from "../../../app/models/orderModel";
+import { connection } from "../../../app/utils/db";
+import { sendOrderEmails } from "../../../utils/sendAdminMail";
 
-import orderModel from '@/app/models/orderModel';
-import { connection } from '@/app/utils/db';
-import { sendOrderEmails } from '@/utils/sendAdminMail';
-
-import { NextResponse } from 'next/server';
+import { NextResponse } from "next/server";
 
 export async function POST(request) {
   try {
@@ -16,7 +15,7 @@ export async function POST(request) {
     // Validate order data
     if (!orderData || !orderData.items || orderData.items.length === 0) {
       return NextResponse.json(
-        { error: 'Invalid order data' }, 
+        { error: "Invalid order data" },
         { status: 400 }
       );
     }
@@ -26,38 +25,40 @@ export async function POST(request) {
       customerDetails: orderData.customerDetails,
       items: orderData.items,
       totalPrice: orderData.totalPrice,
-      paymentMethod: orderData.paymentMethod || 'Cash on Delivery (COD)',
+      paymentMethod: orderData.paymentMethod || "Cash on Delivery (COD)",
       orderDate: new Date(),
-      status: 'Pending'
+      status: "Pending",
     });
 
     // Save order to database
     const savedOrder = await newOrder.save();
 
-    const customerDetails = orderData.customerDetails
-   
-    const items = orderData.items
+    const customerDetails = orderData.customerDetails;
+
+    const items = orderData.items;
     // customerDetails,items,totalPrice,paymentMethod
-    await sendOrderEmails({customerDetails, items,totalPrice: orderData.totalPrice,paymentMethod:orderData.paymentMethod} );
+    await sendOrderEmails({
+      customerDetails,
+      items,
+      totalPrice: orderData.totalPrice,
+      paymentMethod: orderData.paymentMethod,
+    });
     // Return success response
     return NextResponse.json(
-      { 
-        message: 'Order placed successfully', 
-        orderId: savedOrder._id 
-      }, 
+      {
+        message: "Order placed successfully",
+        orderId: savedOrder._id,
+      },
       { status: 201 }
     );
-
   } catch (error) {
-    console.error('Order submission error:', error);
+    console.error("Order submission error:", error);
     return NextResponse.json(
-      { error: 'Failed to submit order', details: error.message }, 
+      { error: "Failed to submit order", details: error.message },
       { status: 500 }
     );
   }
 }
-
-
 
 export async function GET(request) {
   try {
@@ -66,13 +67,13 @@ export async function GET(request) {
 
     // Extract query parameters
     const { searchParams } = new URL(request.url);
-    const page = parseInt(searchParams.get('page')) || 1; // Default to page 1
+    const page = parseInt(searchParams.get("page")) || 1; // Default to page 1
     const limit = 5; // Fixed 5 products per page
 
     // Validate page
     if (isNaN(page) || page < 1) {
       return NextResponse.json(
-        { error: 'Invalid page number. Page must be a positive integer.' },
+        { error: "Invalid page number. Page must be a positive integer." },
         { status: 400 }
       );
     }
@@ -81,9 +82,7 @@ export async function GET(request) {
     const skip = (page - 1) * limit;
 
     // Fetch orders with pagination
-    const orders = await orderModel.find()
-      .skip(skip)
-      .limit(limit);
+    const orders = await orderModel.find().skip(skip).limit(limit);
 
     // Get the total number of orders for pagination metadata
     const totalOrders = await orderModel.countDocuments();
@@ -107,11 +106,10 @@ export async function GET(request) {
       },
       { status: 200 }
     );
-
   } catch (error) {
-    console.error('Error fetching orders:', error);
+    console.error("Error fetching orders:", error);
     return NextResponse.json(
-      { error: 'Error fetching orders', details: error.message },
+      { error: "Error fetching orders", details: error.message },
       { status: 500 }
     );
   }

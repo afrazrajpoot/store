@@ -1,8 +1,8 @@
 import nodemailer from "nodemailer";
 import { google } from "googleapis";
-import { AdminEmail } from "@/templates/AdminEmail";
-import { CustomerEmail } from "@/templates/CustomerEmail";
-import { ShipmentEmail } from "@/templates/ShipmentEmail";
+import { AdminEmail } from "../templates/AdminEmail";
+import { CustomerEmail } from "../templates/CustomerEmail";
+import { ShipmentEmail } from "../templates/ShipmentEmail";
 
 // Initialize OAuth2 client
 const oAuth2Client = new google.auth.OAuth2(
