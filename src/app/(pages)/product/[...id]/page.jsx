@@ -178,11 +178,11 @@ const ProductPage = ({ params }) => {
                 <span className=" text-[3vw] lg:text-[0.8vw] font-bold text-black-600">
                   PKR {product.price}
                 </span>
-                {product.discountPrice && (
+                {/* {product.discountPrice && (
                   <span className=" text-[3vw] lg:text-[0.8vw] text-gray-500 line-through">
                     PKR {product.discountPrice}
                   </span>
-                )}
+                )} */}
               </div>
             </div>
 
@@ -343,7 +343,7 @@ const ProductPage = ({ params }) => {
               )}
             </div>
 
-            {product.care && (
+            {
               <div
                 className="space-y-4 mt-4 pt-4 border-t"
                 onClick={() => setShowCareerModal(!showCareerModal)}
@@ -359,7 +359,7 @@ const ProductPage = ({ params }) => {
                     {showCareerModal ? "-" : "+"}
                   </button>
                 </div>
-                {showCareerModal && (
+                {
                   <motion.p
                     initial={{
                       opacity: 0,
@@ -381,9 +381,9 @@ const ProductPage = ({ params }) => {
                   >
                     {product.care}
                   </motion.p>
-                )}
+                }
               </div>
-            )}
+            }
           </div>
         </div>
       </motion.div>
