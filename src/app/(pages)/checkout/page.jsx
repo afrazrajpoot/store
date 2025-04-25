@@ -105,7 +105,7 @@ const CheckoutPage = () => {
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-black"></div>
       </div>
     );
-
+  console.log(orderDetails, "orderDetails");
   const customerFields = [
     { name: "name", type: "text", placeholder: "Full Name" },
     { name: "email", type: "email", placeholder: "Email Address" },
@@ -140,11 +140,14 @@ const CheckoutPage = () => {
                   >
                     {item.image && (
                       <img
-                        src={`/api/uploads?filename=${item.image}`}
+                        src={`/api/uploads?filename=${item.image
+                          .split("/")
+                          .pop()}`}
                         alt={item.name}
                         className="w-24 h-24 object-cover rounded-lg"
                       />
                     )}
+
                     <div className="flex-1">
                       <h3 className="font-semibold text-lg mb-2">
                         {item.name}
