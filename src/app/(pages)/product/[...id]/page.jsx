@@ -148,7 +148,7 @@ const ProductPage = ({ params }) => {
                       <AntImage
                         src={`/api/uploads?filename=${img}`}
                         alt={`${product.name} ${index + 1}`}
-                        className="w-full object-contain"
+                        className="w-[500px] h-[500px] object-contain"
                         preview={{
                           mask: (
                             <div className="text-[1vw] font-semibold">
