@@ -140,7 +140,7 @@ const CheckoutPage = () => {
                   >
                     {item.image && (
                       <img
-                        src={item.image}
+                        src={`/api/uploads?filename=${item.image}`}
                         alt={item.name}
                         className="w-24 h-24 object-cover rounded-lg"
                       />
