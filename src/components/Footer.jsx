@@ -87,7 +87,7 @@ const Footer = () => {
       {/* Copyright */}
       <div className="text-center mt-12 text-sm text-gray-400 border-t border-gray-800 pt-8 px-4">
         <p className="hover:text-white transition-colors duration-200">
-          © {new Date().getFullYear()} Copyrights Reserved by Outfitters
+          © {new Date().getFullYear()} Copyrights Reserved by Roshni
         </p>
       </div>
     </footer>

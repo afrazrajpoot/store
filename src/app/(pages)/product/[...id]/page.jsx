@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { Image as AntImage } from "antd";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   ShoppingCartIcon,
   HeartIcon,
@@ -35,6 +35,7 @@ const ProductPage = ({ params }) => {
   const { data, isError } = useGetProductsQuery();
   const [deleteProduct, { isLoading: isDeleting, isSuccess: deleteSuccess }] =
     useDeleteProductMutation();
+
   useEffect(() => {
     const savedCartItems = JSON.parse(
       localStorage.getItem("cartItems") || "[]"
@@ -117,6 +118,76 @@ const ProductPage = ({ params }) => {
     ? [...new Set(product.stock.flatMap((item) => item.color))]
     : [];
 
+  // Animation variants for size selection
+  const sizeButtonVariants = {
+    idle: {
+      scale: 1,
+      boxShadow: "0px 0px 0px rgba(0, 0, 0, 0)",
+    },
+    hover: {
+      scale: 1,
+      boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)",
+      transition: { duration: 0.2, ease: "easeOut" },
+    },
+    selected: {
+      scale: 1.1,
+      boxShadow: "0px 6px 12px rgba(0, 0, 0, 0.15)",
+      transition: { duration: 0.3, ease: "easeOut" },
+    },
+    tap: {
+      scale: 0.95,
+      transition: { duration: 0.1 },
+    },
+  };
+
+  // Animation variants for color selection
+  const colorButtonVariants = {
+    idle: {
+      scale: 1,
+      rotate: 0,
+      boxShadow: "0px 0px 0px rgba(0, 0, 0, 0)",
+    },
+    hover: {
+      scale: 1,
+      rotate: 0,
+      boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.15)",
+      transition: { duration: 0.2, ease: "easeOut" },
+    },
+    selected: {
+      scale: 1.2,
+      rotate: 0,
+      boxShadow: "0px 6px 16px rgba(0, 0, 0, 0.2)",
+      transition: { duration: 0.3, ease: "easeOut" },
+    },
+    tap: {
+      scale: 0.9,
+      rotate: 0,
+      transition: { duration: 0.1 },
+    },
+  };
+
+  // Stagger animation for size buttons
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+        delayChildren: 0.2,
+      },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20, scale: 0.8 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      scale: 1,
+      transition: { duration: 0.4, ease: "easeOut" },
+    },
+  };
+
   return (
     <>
       <motion.div
@@ -178,11 +249,6 @@ const ProductPage = ({ params }) => {
                 <span className=" text-[3vw] lg:text-[0.8vw] font-bold text-black-600">
                   PKR {product.price}
                 </span>
-                {/* {product.discountPrice && (
-                  <span className=" text-[3vw] lg:text-[0.8vw] text-gray-500 line-through">
-                    PKR {product.discountPrice}
-                  </span>
-                )} */}
               </div>
             </div>
 
@@ -218,80 +284,157 @@ const ProductPage = ({ params }) => {
               {uniqueSizes.length > 0 && (
                 <div className="flex items-center space-x-8 mt-[1vw]">
                   <h2 className="text-[3vw] lg:text-[0.8vw] font-bold">Size</h2>
-                  <div className="flex flex-wrap gap-3">
+                  <motion.div
+                    className="flex flex-wrap gap-3"
+                    variants={containerVariants}
+                    initial="hidden"
+                    animate="visible"
+                  >
                     {uniqueSizes.map((size) => {
                       const quantity = getStockQuantity(size);
+                      const isSelected = selectedSize === size;
+                      const isAvailable = quantity > 0;
+
                       return (
-                        <div key={size} className="flex flex-col items-center">
-                          <button
-                            onClick={() =>
-                              quantity > 0 && setSelectedSize(size)
-                            }
-                            className={`text-[2.5vw] lg:text-[0.7vw] 
+                        <motion.div
+                          key={size}
+                          className="flex flex-col items-center"
+                          variants={itemVariants}
+                        >
+                          <motion.button
+                            onClick={() => isAvailable && setSelectedSize(size)}
+                            className={`px-2 py-1 rounded border font-medium transition-colors duration-200
+                              text-[3vw] lg:text-[0.8vw]
                               ${
-                                selectedSize === size
-                                  ? "bg-black text-white"
-                                  : quantity > 0
-                                  ? "bg-white text-black hover:bg-gray-100"
-                                  : "bg-gray-100 text-gray-400 cursor-not-allowed"
+                                isSelected
+                                  ? "bg-black text-white border-black"
+                                  : isAvailable
+                                  ? "bg-white text-black border-gray-300 hover:border-gray-400"
+                                  : "bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed"
                               }`}
-                            disabled={quantity === 0}
+                            disabled={!isAvailable}
+                            variants={sizeButtonVariants}
+                            initial="idle"
+                            animate={isSelected ? "selected" : "idle"}
+                            whileHover={isAvailable ? "hover" : "idle"}
+                            whileTap={isAvailable ? "tap" : "idle"}
                           >
                             {size}
-                          </button>
-                          <span
-                            className={`text-[0.6vw] 
-                            ${
-                              quantity === 0 ? "text-red-500" : "text-gray-600"
-                            }`}
-                          >
-                            {/* {quantity === 0 ? 'Out of Stock' : `${quantity} available`} */}
-                          </span>
-                        </div>
+                          </motion.button>
+                          <AnimatePresence>
+                            {isSelected && (
+                              <motion.div
+                                initial={{ opacity: 0, y: -10, scale: 0.8 }}
+                                animate={{ opacity: 1, y: 0, scale: 1 }}
+                                exit={{ opacity: 0, y: -10, scale: 0.8 }}
+                                transition={{ duration: 0.3, ease: "easeOut" }}
+                                className="mt-1 text-[0.6vw] text-green-600 font-medium"
+                              >
+                                Selected ✓
+                              </motion.div>
+                            )}
+                          </AnimatePresence>
+                        </motion.div>
                       );
                     })}
-                  </div>
+                  </motion.div>
                 </div>
               )}
 
               <div className="flex items-center space-x-8 mt-4">
                 <h2 className="text-[3vw] lg:text-[0.8vw] font-bold">Colors</h2>
-                <div className="flex flex-wrap gap-4">
-                  {allColors.map((color) => (
-                    <motion.button
-                      key={color}
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      color
-                      onClick={() => setSelectedColor(color)}
-                      className="relative group"
-                      aria-label={`Select ${color} color`}
-                    >
-                      <div
-                        className={`w-4 h-4 rounded-full transition-all duration-200 
-                          ${
-                            selectedColor === color
-                              ? "ring-2 ring-blue-600 ring-offset-2"
-                              : "hover:ring-2 hover:ring-gray-300 hover:ring-offset-1"
-                          }`}
-                        style={{
-                          backgroundColor: color.toLowerCase(),
-                          border:
-                            color.toLowerCase() === "white"
-                              ? "1px solid #e5e7eb"
-                              : "none",
-                        }}
-                      />
-                      <div
-                        className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 
-                                    opacity-0 group-hover:opacity-100 transition-opacity
-                                    text-[1.5vw] lg:text-[0.65vw] text-gray-600 whitespace-nowrap"
+                <motion.div
+                  className="flex flex-wrap gap-4"
+                  variants={containerVariants}
+                  initial="hidden"
+                  animate="visible"
+                >
+                  {allColors.map((color) => {
+                    const isSelected = selectedColor === color;
+
+                    return (
+                      <motion.div
+                        key={color}
+                        className="relative"
+                        variants={itemVariants}
                       >
-                        {color}
-                      </div>
-                    </motion.button>
-                  ))}
-                </div>
+                        <motion.button
+                          onClick={() => setSelectedColor(color)}
+                          className="relative group focus:outline-none"
+                          aria-label={`Select ${color} color`}
+                          variants={colorButtonVariants}
+                          initial="idle"
+                          animate={isSelected ? "selected" : "idle"}
+                          whileHover="hover"
+                          whileTap="tap"
+                        >
+                          <div
+                            className={`w-8 h-8 rounded-full transition-all duration-200 border-2
+                              ${
+                                isSelected
+                                  ? "border-blue-600"
+                                  : "border-gray-300 hover:border-gray-400"
+                              }`}
+                            style={{
+                              backgroundColor: color.toLowerCase(),
+                              borderColor:
+                                color.toLowerCase() === "white" && !isSelected
+                                  ? "#e5e7eb"
+                                  : isSelected
+                                  ? "#2563eb"
+                                  : "transparent",
+                            }}
+                          />
+
+                          {/* Selection indicator */}
+                          <AnimatePresence>
+                            {isSelected && (
+                              <motion.div
+                                initial={{ scale: 0, opacity: 0 }}
+                                animate={{ scale: 1, opacity: 1 }}
+                                exit={{ scale: 0, opacity: 0 }}
+                                transition={{ duration: 0.2, ease: "easeOut" }}
+                                className="absolute inset-0 flex items-center justify-center"
+                              >
+                                <div className="w-3 h-3 bg-white rounded-full shadow-lg border border-gray-200" />
+                              </motion.div>
+                            )}
+                          </AnimatePresence>
+
+                          {/* Color name tooltip */}
+                          <div
+                            className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 
+                                      opacity-0 group-hover:opacity-100 transition-opacity duration-200
+                                      text-[1.5vw] lg:text-[0.65vw] text-gray-600 whitespace-nowrap
+                                      bg-white px-2 py-1 rounded shadow-lg border"
+                          >
+                            {color}
+                          </div>
+                        </motion.button>
+
+                        {/* Selected label */}
+                        <AnimatePresence>
+                          {isSelected && (
+                            <motion.div
+                              initial={{ opacity: 0, y: 10, scale: 0.8 }}
+                              animate={{ opacity: 1, y: 0, scale: 1 }}
+                              exit={{ opacity: 0, y: 10, scale: 0.8 }}
+                              transition={{
+                                duration: 0.3,
+                                ease: "easeOut",
+                                delay: 0.1,
+                              }}
+                              className="absolute -bottom-12 left-1/2 transform -translate-x-1/2
+                                        text-[0.6vw] text-green-600 font-medium whitespace-nowrap"
+                            >
+                              Selected ✓
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
+                      </motion.div>
+                    );
+                  })}
+                </motion.div>
               </div>
             </section>
 
@@ -314,13 +457,7 @@ const ProductPage = ({ params }) => {
                   }`}
               >
                 <ShoppingCartIcon size={20} />
-                {!selectedSize
-                  ? "Add to cart"
-                  : !selectedColor
-                  ? "Add to cart"
-                  : getStockQuantity(selectedSize) === 0
-                  ? "Add to cart"
-                  : "Add to cart"}
+                Add to cart
               </button>
               {userRole === "admin" && (
                 <>
@@ -332,7 +469,7 @@ const ProductPage = ({ params }) => {
                     <button
                       className="text-red-500 hover:text-red-700"
                       onClick={(e) => {
-                        e.preventDefault(); // Prevent navigating to product page when clicking delete
+                        e.preventDefault();
                         deleteProduct(product._id);
                       }}
                     >
@@ -343,47 +480,45 @@ const ProductPage = ({ params }) => {
               )}
             </div>
 
-            {
-              <div
-                className="space-y-4 mt-4 pt-4 border-t"
-                onClick={() => setShowCareerModal(!showCareerModal)}
-              >
-                <div className="flex items-center justify-between">
-                  <h2 className="text-[3vw] lg:text-[0.8vw] font-semibold">
-                    Care Instructions
-                  </h2>
-                  <button
-                    className="text-black-600 hover:text-black-700 font-bold transition-colors"
-                    aria-label="Show more care instructions"
-                  >
-                    {showCareerModal ? "-" : "+"}
-                  </button>
-                </div>
-                {
-                  <motion.p
-                    initial={{
-                      opacity: 0,
-                      rotateX: 15,
-                      scale: 0.95,
-                      perspective: 1000,
-                    }}
-                    animate={{
-                      opacity: 1,
-                      rotateX: 0,
-                      scale: 1,
-                    }}
-                    transition={{
-                      duration: 0.8,
-                      ease: [0.645, 0.045, 0.355, 1],
-                      staggerChildren: 0.1,
-                    }}
-                    className="text-[3vw] lg:text-[0.7vw] text-gray-600 bg-gray-50 p-4 rounded-xl"
-                  >
-                    {product.care}
-                  </motion.p>
-                }
+            <div
+              className="space-y-4 mt-4 pt-4 border-t"
+              onClick={() => setShowCareerModal(!showCareerModal)}
+            >
+              <div className="flex items-center justify-between">
+                <h2 className="text-[3vw] lg:text-[0.8vw] font-semibold">
+                  Care Instructions
+                </h2>
+                <button
+                  className="text-black-600 hover:text-black-700 font-bold transition-colors"
+                  aria-label="Show more care instructions"
+                >
+                  {showCareerModal ? "-" : "+"}
+                </button>
               </div>
-            }
+              {showCareerModal && (
+                <motion.p
+                  initial={{
+                    opacity: 0,
+                    rotateX: 15,
+                    scale: 0.95,
+                    perspective: 1000,
+                  }}
+                  animate={{
+                    opacity: 1,
+                    rotateX: 0,
+                    scale: 1,
+                  }}
+                  transition={{
+                    duration: 0.8,
+                    ease: [0.645, 0.045, 0.355, 1],
+                    staggerChildren: 0.1,
+                  }}
+                  className="text-[3vw] lg:text-[0.7vw] text-gray-600 bg-gray-50 p-4 rounded-xl"
+                >
+                  {product.care}
+                </motion.p>
+              )}
+            </div>
           </div>
         </div>
       </motion.div>
